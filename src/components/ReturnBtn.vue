@@ -8,7 +8,6 @@
 </script>
 
 <template>
-   <div class="div"></div>
    <div class="return-btn" @click="goTo(backPath)">
       <img src="@/assets/icons/return-arrow.svg" />
    </div>
@@ -16,10 +15,6 @@
 
 <style>
    .return-btn {
-      position: absolute;
-      top: var(--sm);
-      left: var(--sm);
-
       --size: 32px;
 
       height: var(--size);

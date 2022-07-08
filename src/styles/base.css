@@ -7,7 +7,9 @@
    --bg-dark-soft: 200, 5%, 24%;
    --bg-light: var(--txt-dark);
 
-   --primary-dark: 274, 25%, 25%;
+   --primary-dark: 233, 27%, 36%;
+   --accent-dark: 274, 25%, 25%;
+   --highlight-dark: 215, 13%, 82%;
 
    --txt-dark: 0, 0%, 65%;
    --txt-light: var(--bg-dark);
@@ -19,7 +21,11 @@
    --sx: 0.25rem; /* 4px */
    --sm: 0.5rem; /* 8px */
 
-   /* Filters 🥅*/
+   --xl: 2rem; /* 32px */
+   --xl2: 2.5rem; /* 40px */
+   --xl3: 3rem; /* 48px */
+
+   /* Filters 🥅 */
    --white: invert(100%) sepia(100%) saturate(1%) hue-rotate(343deg) brightness(102%)
       contrast(101%);
 }
@@ -36,4 +42,23 @@
    color: hsla(var(--txt-dark), 1);
 
    user-select: none;
+}
+
+/* Utility 🧰 */
+.t-title {
+   color: hsla(var(--primary-dark), 1);
+   font-size: var(--xl3);
+   font-weight: bold;
+}
+
+.d-grid {
+   display: grid;
+   place-items: center;
+   place-content: center;
+}
+
+.d-flex {
+   display: flex;
+   align-items: center;
+   justify-content: center;
 }
