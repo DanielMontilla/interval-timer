@@ -8,27 +8,22 @@
 </script>
 
 <template>
-   <div class="return-btn" @click="goTo(backPath)">
+   <div class="return-btn d-flex" @click="goTo(backPath)">
       <img src="@/assets/icons/return-arrow.svg" />
    </div>
 </template>
 
 <style>
    .return-btn {
-      --size: 32px;
+      --size: var(--xl);
 
       height: var(--size);
       width: var(--size);
-
-      /* Flex 💪 */
-      display: flex;
-      align-items: center;
-      justify-content: center;
    }
 
    .return-btn img {
       --size: 60%;
-      filter: var(--white);
+      filter: var(--f-white);
       height: var(--size);
       width: var(--size);
    }

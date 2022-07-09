@@ -40,7 +40,7 @@
 
    .add img {
       --size: 40%;
-      filter: var(--white);
+      filter: var(--f-white);
       height: var(--size);
       width: var(--size);
    }
