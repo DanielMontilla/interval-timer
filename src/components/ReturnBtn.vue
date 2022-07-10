@@ -2,6 +2,7 @@
    import { useRouter } from '@/services/_index';
    interface ReturnBtnProps {
       backPath: string;
+      confirm?: string;
    }
    const { backPath } = defineProps<ReturnBtnProps>();
    const { goTo } = useRouter();

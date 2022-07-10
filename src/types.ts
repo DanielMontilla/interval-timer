@@ -5,7 +5,9 @@ export type vueComponent = ReturnType<typeof defineComponent>;
 export interface Exercise {
    name: string;
    secs: number;
+   icon?: 'rest' | 'run';
 }
+
 export interface Workout {
    name: string;
    reps: number;

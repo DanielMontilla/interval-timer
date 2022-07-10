@@ -8,11 +8,13 @@
    --bg-light: var(--txt-dark);
 
    --primary-dark: 233, 27%, 36%;
+   --secundary-dark: 241, 41%, 39%;
    --accent-dark: 274, 25%, 25%;
    --accent1-dark: 275, 40%, 30%;
    --highlight-dark: 215, 13%, 82%;
 
    --error-dark: 0, 70%, 60%;
+   --succ-dark: 120, 45%, 37%;
 
    --txt-dark: 0, 0%, 65%;
    --txt-light: var(--bg-dark);
@@ -39,17 +41,19 @@
 }
 
 #app {
-   position: absolute;
    height: 100vh;
    width: 100vw;
 
    font-family: 'Nunito';
    font-size: var(--base);
 
-   background-color: hsla(var(--bg-dark), 1);
    color: hsla(var(--txt-dark), 1);
 
    user-select: none;
+}
+
+body {
+   background-color: hsla(var(--bg-dark), 1);
 }
 
 /* Utility 🧰 */

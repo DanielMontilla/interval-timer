@@ -1,41 +1,51 @@
 <script setup lang="ts">
    import { InputState } from '@/types';
-   import { onMounted, ref } from 'vue';
+   import { onMounted, ref, toRef, watch } from 'vue';
    interface FormFieldProps {
       name: string;
       type: 'number' | 'string' | 'password';
-      content?: number | string;
+      content: [number | string, InputState];
       required?: boolean;
       focus?: boolean;
-      state?: InputState;
+      validation?: (value: string) => InputState;
    }
-   const { name, required, focus, type, state } = defineProps<FormFieldProps>();
+   const { name, required, focus, type, validation, content } =
+      defineProps<FormFieldProps>();
    const emit = defineEmits(['update:content']);
    const inputEl = ref<HTMLInputElement>();
    const focused = ref<boolean>(focus ? true : false);
 
+   const validate = (s: string) => {
+      emit('update:content', [s, validation ? validation(s) : 'unfiled']);
+   };
+
    const decrement = () => {
       if (inputEl.value) {
          let n = Number.parseFloat(inputEl.value.value);
-         if (Number.isNaN(n)) {
-            emit('update:content', (1).toString());
-         } else {
-            let newN = n - 1;
-            if (newN > 0) {
-               emit('update:content', newN.toString());
+         let v = 1;
+         if (!Number.isNaN(n)) {
+            if (n - 1 > 0) {
+               v = n - 1;
             }
          }
+         let r = v.toString();
+         emit('update:content', r);
+         validate(r);
       }
    };
 
    const increment = () => {
       if (inputEl.value) {
          let n = Number.parseFloat(inputEl.value.value);
-         if (Number.isNaN(n)) {
-            emit('update:content', (1).toString());
-         } else {
-            emit('update:content', (n + 1).toString());
+         let v = 1;
+
+         if (!Number.isNaN(n)) {
+            v = n + 1;
          }
+
+         let r = v.toString();
+         emit('update:content', r);
+         validate(r);
       }
    };
 
@@ -49,11 +59,11 @@
       class="field-cont d-flex"
       :style="{
          borderColor:
-            state === undefined || state === 'unfilled'
-               ? 'hsla(var(--highlight-dark, .75)' // if undifined or 'unfilled'
-               : state === 'completed'
-               ? 'hsla(var(--accent1-dark), .75)' // if completed or valid
-               : 'hsla(var(--error-dark), .75)', // if has error
+            content[1] === undefined || content[1] === 'unfilled'
+               ? 'hsla(var(--highlight-dark, 0.6)' // if undifined or 'unfilled'
+               : content[1] === 'completed'
+               ? 'hsla(var(--succ-dark), 0.5)' // if completed or valid
+               : 'hsla(var(--error-dark), 0.5)', // if has error
          backgroundColor: focused ? 'hsla(var(--white), 0.025)' : 'transparent',
       }"
    >
@@ -65,11 +75,11 @@
          :name="name"
          :type="type"
          autocomplete="off"
-         :value="content"
+         :value="content[0]"
          :style="{
-            width: type === 'number' ? '35%' : '100%',
+            width: type === 'number' ? '55%' : '100%',
          }"
-         @input="$emit('update:content', ($event.target as HTMLTextAreaElement).value)"
+         @input="[validate(($event.target as HTMLTextAreaElement).value)]"
          @focusin="focused = true"
          @focusout="focused = false"
       />
@@ -92,12 +102,18 @@
    .field-input {
       display: inline;
       color: hsla(var(--txt-dark), 1);
-      font-size: var(--xl2);
 
       padding: var(--sx) var(--sm);
       background: transparent;
       border: 0;
       outline: 0;
+   }
+
+   input[type='number']::-webkit-inner-spin-button,
+   input[type='number']::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
    }
 
    .field-input::placeholder {
@@ -107,9 +123,9 @@
       padding-left: var(--sx);
    }
    .crements {
-      width: 60%;
       justify-self: end;
       justify-content: end;
+      margin-right: 10%;
    }
 
    .crements > * + * {
