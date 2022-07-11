@@ -11,15 +11,21 @@ type W = Workout[];
 const workouts = ref(exists(key) ? (load<W>(key) as W) : save<W>('workouts', []));
 const currentWorkout = ref(workouts.value.length ? 0 : -1);
 
-const add = (workout: Omit<Workout, 'time'>) => {
+const add = ({ exercises, name, reps }: Omit<Workout, 'time'>) => {
    let time = 0;
-   for (const exercise of workout.exercises) {
+
+   for (const exercise of exercises) {
       time += exercise.secs;
    }
 
-   time *= workout.reps;
+   time *= reps;
 
-   workouts.value.push(addProp(workout, 'time', time));
+   workouts.value.push({
+      name: name,
+      reps: reps,
+      exercises: exercises,
+      time: time,
+   });
 };
 
 const clear = () => {

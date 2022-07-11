@@ -1,4 +1,5 @@
 import ReturnBtn from '@/components/ReturnBtn.vue';
+import Separator from '@/components/Separator.vue';
 import FormField from '@/components/FormField.vue';
 
-export { ReturnBtn, FormField };
+export { ReturnBtn, FormField, Separator };

@@ -3,6 +3,7 @@
    import { useRouter, useWorkout } from '@/services/_index';
    import { Exercise, InputState } from '@/types';
    import { computed, onMounted, ref, watch } from 'vue';
+   import Separator from '@/components/Separator.vue';
 
    const { goTo } = useRouter();
    const { add } = useWorkout();
@@ -28,6 +29,8 @@
       } else {
          totalSecs = 0;
       }
+
+      // TODO: use util func for this
 
       let mins: number;
       let secs: number;
@@ -142,12 +145,8 @@
 
 <template>
    <div class="create-workout">
-      <div class="form d-flex">
-         <div class="separator d-flex">
-            <div class="separator-line" :style="{ width: '20%' }" />
-            <div class="separator-text">General</div>
-            <div class="separator-line" />
-         </div>
+      <div class="form d-flex page">
+         <Separator text="General" />
          <div class="general-form">
             <FormField
                name="name"
@@ -177,11 +176,7 @@
                </div>
             </div>
          </div>
-         <div class="separator d-flex">
-            <div class="separator-line" :style="{ width: '20%' }" />
-            <div class="separator-text">Exercises</div>
-            <div class="separator-line" />
-         </div>
+         <Separator text="Exercises" />
          <div class="exercises d-flex">
             <div v-for="(exercise, i) in exercises" class="exercise-card">
                <FormField
@@ -229,35 +224,10 @@
 <style scoped>
    .create-workout {
       width: 100vw;
-
-      padding-bottom: var(--md);
-   }
-
-   .separator {
-      width: 100%;
-      justify-content: start;
-   }
-   .separator > * + * {
-      margin-left: var(--sm);
-   }
-
-   .separator-line {
-      width: 100%;
-      display: inline-block;
-      height: var(--sx);
-      background-color: hsla(var(--accent1-dark), 1);
-      border-radius: var(--md);
-   }
-
-   .separator-text {
-      font-weight: bold;
-      font-size: var(--xl);
    }
    .form {
       width: 100vw;
       grid-area: form;
-      padding-right: var(--sm);
-      padding-left: var(--sm);
 
       flex-direction: column;
    }

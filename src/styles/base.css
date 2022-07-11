@@ -30,6 +30,10 @@
 
    --md: 0.75rem; /* 12px */
 
+   --lg: 1.25rem; /* 20px */
+   --lg2: 1.5rem; /* 24px */
+   --lg3: 1.75rem; /* 28px */
+
    --xl: 2rem; /* 32px */
    --xl2: 2.5rem; /* 40px */
    --xl3: 3rem; /* 48px */
@@ -73,4 +77,10 @@ body {
    display: flex;
    align-items: center;
    justify-content: center;
+}
+
+.page {
+   padding-right: var(--sm);
+   padding-left: var(--sm);
+   padding-bottom: var(--md);
 }
