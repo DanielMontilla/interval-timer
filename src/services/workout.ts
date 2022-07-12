@@ -1,15 +1,24 @@
 import { Workout } from '@/types';
 import { addProp } from '@/util';
-import { useStorage } from '@/services/_index';
+import { useStorage, useRouter } from '@/services/_index';
 import { ref, watch } from 'vue';
-
-const { load, save, exists } = useStorage();
-
-const key = 'workouts';
+import { computed } from '@vue/reactivity';
 type W = Workout[];
 
+const { load, save, exists } = useStorage();
+const { goTo } = useRouter();
+
+const key = 'workouts';
+
 const workouts = ref(exists(key) ? (load<W>(key) as W) : save<W>('workouts', []));
-const currentWorkout = ref(workouts.value.length ? 0 : -1);
+const currentWorkoutIndex = ref(workouts.value.length ? 0 : -1);
+
+const currentWorkout = computed(() => workouts.value[currentWorkoutIndex.value]);
+
+const open = (index: number) => {
+   currentWorkoutIndex.value = index;
+   goTo('/workout');
+};
 
 const add = ({ exercises, name, reps }: Omit<Workout, 'time'>) => {
    let time = 0;
@@ -40,6 +49,6 @@ watch(
    { deep: true }
 );
 
-const useWorkout = () => ({ currentWorkout, workouts, add, clear });
+const useWorkout = () => ({ currentWorkout, workouts, add, clear, open });
 
 export default useWorkout;

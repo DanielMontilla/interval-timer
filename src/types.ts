@@ -15,4 +15,15 @@ export interface Workout {
    exercises: Exercise[];
 }
 
+export type LoopCallback = (dt: number) => any;
+
+export interface IntervalOptions {
+   time: number;
+   onTick?: (dt: number) => void;
+   onIteration?: (iteration: number) => number | void;
+   onCompleted?: () => number | void;
+   iterations?: number | 'infinite';
+   paused?: boolean;
+}
+
 export type InputState = 'unfilled' | 'error' | 'completed';

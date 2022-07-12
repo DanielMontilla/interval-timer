@@ -4,7 +4,7 @@
    import { Exercise } from '@/types';
    import { Separator } from '@/components/_index';
 
-   const { workouts, clear } = useWorkout();
+   const { workouts, clear, open } = useWorkout();
    const { goTo } = useRouter();
 
    const parseExercises = (exercises: Exercise[]) => {
@@ -23,8 +23,11 @@
    <div class="select-workout page">
       <Separator text="My Workouts" size="var(--xl2)" />
       <div class="workout-list">
-         <div v-for="workout in workouts" class="workout-card d-grid">
-            <div class="name">{{ workout.name }}</div>
+         <div v-for="(workout, i) in workouts" class="workout-card d-grid">
+            <div class="name-plate d-flex" @click="open(i)">
+               <div class="name">{{ workout.name }}</div>
+               <img class="name-icon" src="@/assets/icons/play.svg" />
+            </div>
             <img class="menu" src="@/assets/icons/menu.svg" />
             <div class="details">
                <div class="detail d-flex">
@@ -65,12 +68,26 @@
       padding: 0 var(--sm);
    }
 
-   .name {
+   .name-plate {
       grid-area: name;
+      justify-self: start;
+   }
+   .name-plate > * + * {
+      margin-left: var(--md);
+   }
+
+   .name {
       font-size: var(--lg3);
       text-decoration: underline solid hsla(var(--accent1-dark), 0.6) 4px;
       font-weight: bold;
-      justify-self: start;
+   }
+
+   .name-icon {
+      filter: var(--f-white);
+      --size: var(--lg3);
+
+      width: var(--size);
+      height: var(--size);
    }
 
    .menu {

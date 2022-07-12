@@ -1,7 +1,7 @@
 <script setup lang="ts">
    import { onMounted, ref } from 'vue';
    import { useRouter } from '@/services/_index';
-   import { Home, Select, CreateWorkout } from '@/pages/_index';
+   import { Home, Select, CreateWorkout, Workout } from '@/pages/_index';
 
    // Services 🔌
    const { initRoutes, currentPage, currentPath, goTo } = useRouter();
@@ -14,6 +14,7 @@
          '/home': Home,
          '/select': Select,
          '/new-workout': CreateWorkout,
+         '/workout': Workout,
       });
 
       await goTo('/select');
@@ -22,7 +23,7 @@
 </script>
 
 <template>
-   <main>
+   <main class="max-width">
       <transition name="fade" mode="out-in">
          <div :key="currentPath">
             <component :is="currentPage" />
@@ -33,20 +34,14 @@
 
 <style>
    @import '@/styles/base.css';
-   main {
-      height: 100%;
-      width: 100%;
-   }
 
    .fade-enter-active,
    .fade-leave-active {
       transition: opacity 0.05s linear;
-      /* transition: transform 0.05s linear; */
    }
 
    .fade-enter-from,
    .fade-leave-to {
       opacity: 0;
-      /* transform: translate(-50px); */
    }
 </style>
