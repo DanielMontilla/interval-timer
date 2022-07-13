@@ -6,7 +6,7 @@ import { ref, type Ref } from 'vue';
 export default class Interval {
    public progress = ref(1);
    public iteration: number = 0;
-   public completed: boolean = false;
+   public completed = ref(false);
 
    public isPaused: Ref<boolean>;
    public iterations: number | 'infinite';
@@ -34,7 +34,7 @@ export default class Interval {
       const { add } = useLoop();
 
       this.loopId = add(dt => {
-         if (!this.isPaused.value && !this.completed) {
+         if (!this.isPaused.value && !this.completed.value) {
             // not paused
             if (this.onTick) this.onTick(dt);
             let step = this.remaining.value - dt;
@@ -51,7 +51,7 @@ export default class Interval {
                      if (newTime == 'completed') this.complete();
                      if (typeof newTime === 'number') this.time = newTime;
                   }
-                  this.remaining.value = time + step;
+                  this.remaining.value = this.time + step;
                   if (typeof this.iterations === 'number') this.iterations--;
                } else {
                   this.complete();
@@ -69,7 +69,7 @@ export default class Interval {
 
    private complete() {
       if (this.onCompleted) this.onCompleted();
-      this.completed = true;
+      this.completed.value = true;
    }
 
    private computeProgress() {
@@ -86,5 +86,23 @@ export default class Interval {
 
    public unpause() {
       this.isPaused.value = false;
+   }
+
+   public reset(options: Partial<IntervalOptions>) {
+      let { time, onTick, onIteration, onCompleted, iterations, paused } = options;
+
+      this.time = time ? time : this.time;
+
+      this.isPaused.value = paused ? paused : this.isPaused.value;
+      this.iterations = iterations ? iterations : this.iterations;
+      this.onTick = onTick ? onTick : this.onTick;
+      this.onIteration = onIteration ? onIteration : this.onIteration;
+      this.onCompleted = onCompleted ? onCompleted : this.onCompleted;
+
+      this.remaining.value = this.time;
+
+      this.completed.value = false;
+
+      this.computeProgress();
    }
 }

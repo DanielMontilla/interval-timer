@@ -144,8 +144,8 @@
 </script>
 
 <template>
-   <div class="create-workout">
-      <div class="form d-flex page">
+   <div class="create-workout page max-width">
+      <div class="form d-flex">
          <Separator text="General" />
          <div class="general-form">
             <FormField
@@ -222,11 +222,7 @@
 </template>
 
 <style scoped>
-   .create-workout {
-      width: 100vw;
-   }
    .form {
-      width: 100vw;
       grid-area: form;
 
       flex-direction: column;

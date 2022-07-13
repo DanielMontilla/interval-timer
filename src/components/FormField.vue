@@ -69,6 +69,7 @@
    >
       <input
          class="field-input"
+         spellcheck="false"
          ref="inputEl"
          :placeholder="name"
          :required="required"

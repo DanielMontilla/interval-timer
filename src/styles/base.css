@@ -15,6 +15,7 @@
 
    --error-dark: 0, 70%, 60%;
    --succ-dark: 120, 45%, 37%;
+   --warn-dark: 60, 78%, 61%;
 
    --txt-dark: 0, 0%, 65%;
    --txt-light: var(--bg-dark);
