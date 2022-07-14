@@ -1,10 +1,12 @@
 <script setup lang="ts">
    import { useWorkout, useRouter } from '@/services/_index';
    import { parseSecs } from '@/util';
-   import { Exercise } from '@/types';
-   import { Separator } from '@/components/_index';
+   import { Exercise, Workout } from '@/types';
+   import { Separator, Menu } from '@/components/_index';
+   import { ref } from 'vue';
+   import { Duplex } from 'stream';
 
-   const { workouts, clear, open } = useWorkout();
+   const { workouts, open } = useWorkout();
    const { goTo } = useRouter();
 
    const parseExercises = (exercises: Exercise[]) => {
@@ -17,10 +19,52 @@
       return res;
    };
    const add = () => goTo('/new-workout');
+
+   const showMenu = ref(false);
+   const selectedWorkout = ref(0);
+   const menuOptions = [
+      {
+         label: 'edit',
+         iconSrc: 'edit',
+         callback: () => {},
+      },
+      {
+         label: 'duplicate',
+         iconSrc: 'duplicate',
+         callback: () => {
+            let { exercises, name, reps, time } = workouts.value[selectedWorkout.value];
+
+            let dupe: Workout = {
+               name: name + ' copy',
+               exercises: exercises,
+               reps: reps,
+               time: time,
+            };
+
+            workouts.value.splice(selectedWorkout.value + 1, 0, dupe);
+         },
+      },
+      {
+         label: 'delete',
+         iconSrc: 'x',
+         callback: () => {
+            workouts.value.splice(selectedWorkout.value, 1);
+         },
+         color: 'red',
+      },
+   ];
+   const spawnMenu = (i: number) => {
+      selectedWorkout.value = i;
+      showMenu.value = true;
+   };
 </script>
 
 <template>
    <div class="select-workout page">
+      <!-- TODO: find way for component to handle its own animation transitions -->
+      <Transition name="fade">
+         <Menu v-if="showMenu" :options="menuOptions" :close="() => (showMenu = false)" />
+      </Transition>
       <Separator text="My Workouts" size="var(--xl2)" />
       <div class="workout-list">
          <div v-for="(workout, i) in workouts" class="workout-card d-grid">
@@ -28,7 +72,7 @@
                <div class="name">{{ workout.name }}</div>
                <img class="name-icon" src="@/assets/icons/play.svg" />
             </div>
-            <img class="menu" src="@/assets/icons/menu.svg" />
+            <img class="menu" src="@/assets/icons/menu.svg" @click="spawnMenu(i)" />
             <div class="details">
                <div class="detail d-flex">
                   <img class="detail-icon" src="@/assets/icons/time.svg" />
@@ -45,7 +89,6 @@
             </div>
          </div>
       </div>
-      <button @click="clear" :style="{ marginTop: '40px' }">clear</button>
       <div class="add d-flex" @click="add">
          <img src="@/assets/icons/add.svg" />
       </div>
@@ -53,6 +96,10 @@
 </template>
 
 <style scoped>
+   .select-workout {
+      position: relative;
+      height: 100vh;
+   }
    .workout-list > * + * {
       margin-top: var(--sm);
       border-top: solid var(--sxx) hsla(var(--highlight-dark), 0.1);
@@ -66,6 +113,16 @@
          'details details'
          'exercises exercises';
       padding: 0 var(--sm);
+   }
+
+   .fade-enter-active,
+   .fade-leave-active {
+      transition: opacity 0.25s ease;
+   }
+
+   .fade-enter-from,
+   .fade-leave-to {
+      opacity: 0;
    }
 
    .name-plate {

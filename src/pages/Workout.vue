@@ -340,8 +340,6 @@
       grid-area: exercise-list;
       justify-self: start;
       padding: 0 var(--md);
-      overflow-x: hidden; /* Hide horizontal scrollbar */
-      overflow-y: scroll; /* Add vertical scrollbar */
    }
 
    .exercise-list > * + * {
