@@ -10,7 +10,7 @@
 
 <template>
    <div class="return-btn d-flex" @click="goTo(backPath)">
-      <img src="@/assets/icons/return-arrow.svg" />
+      <img src="/icons/return-arrow.svg" />
    </div>
 </template>
 

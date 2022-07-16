@@ -25,7 +25,7 @@
          >
             <img
                class="option-icon"
-               :src="`src/assets/icons/${iconSrc ? iconSrc : 'bullet'}.svg`"
+               :src="`/icons/${iconSrc ? iconSrc : 'bullet'}.svg`"
                :style="{
                   filter: `var(--f-${color ? color : 'white'})`,
                }"
@@ -47,8 +47,8 @@
    .menu-area {
       position: absolute;
       inset: 0;
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
       z-index: 1;
       backdrop-filter: blur(3px);
    }

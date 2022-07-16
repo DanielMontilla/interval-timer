@@ -165,13 +165,13 @@
             />
             <div class="workout-stats d-grid">
                <div class="time-stat workout-stat d-flex">
-                  <img class="stat-icon" src="@/assets/icons/time.svg" />
+                  <img class="stat-icon" src="/icons/time.svg" />
                   <div class="stat-text">
                      {{ time }}
                   </div>
                </div>
                <div class="count-stat workout-stat d-flex">
-                  <img class="stat-icon" src="@/assets/icons/workout.svg" />
+                  <img class="stat-icon" src="/icons/workout.svg" />
                   {{ exercises.length }}
                </div>
             </div>
@@ -194,27 +194,27 @@
                <div class="position-btns d-flex">
                   <img
                      class="prev pos-btn"
-                     src="@/assets/icons/up-arrow.svg"
+                     src="/icons/up-arrow.svg"
                      @click="move(i, 'prev')"
                   />
                   <img
                      class="next pos-btn"
-                     src="@/assets/icons/up-arrow.svg"
+                     src="/icons/up-arrow.svg"
                      :style="{ transform: 'rotate(180deg)' }"
                      @click="move(i, 'next')"
                   />
                </div>
             </div>
             <div class="add-exercise-btn d-flex" @click="addExercise">
-               <img src="@/assets/icons/plus.svg" />
+               <img src="/icons/plus.svg" />
             </div>
          </div>
          <div class="actions-area d-grid">
             <div class="cancel-btn action-btn d-flex" @click="goTo('/select')">
-               <img class="cancel-icon action-icon" src="@/assets/icons/x.svg" />
+               <img class="cancel-icon action-icon" src="/icons/x.svg" />
             </div>
             <div class="submit-btn action-btn d-flex" @click="submit">
-               <img class="submit-icon action-icon" src="@/assets/icons/check.svg" />
+               <img class="submit-icon action-icon" src="/icons/check.svg" />
             </div>
          </div>
       </div>

@@ -70,17 +70,17 @@
          <div v-for="(workout, i) in workouts" class="workout-card d-grid">
             <div class="name-plate d-flex" @click="open(i)">
                <div class="name">{{ workout.name }}</div>
-               <img class="name-icon" src="@/assets/icons/play.svg" />
+               <img class="name-icon" src="/icons/play.svg" />
             </div>
-            <img class="menu" src="@/assets/icons/menu.svg" @click="spawnMenu(i)" />
+            <img class="menu" src="/icons/menu.svg" @click="spawnMenu(i)" />
             <div class="details">
                <div class="detail d-flex">
-                  <img class="detail-icon" src="@/assets/icons/time.svg" />
+                  <img class="detail-icon" src="/icons/time.svg" />
                   {{ parseSecs(workout.time) }}
                </div>
                <div :style="{ margin: '0 var(--md)' }">|</div>
                <div class="detail d-flex">
-                  <img class="detail-icon" src="@/assets/icons/workout.svg" />
+                  <img class="detail-icon" src="/icons/workout.svg" />
                   {{ workout.exercises.length }}
                </div>
             </div>
@@ -90,7 +90,7 @@
          </div>
       </div>
       <div class="add d-flex" @click="add">
-         <img src="@/assets/icons/add.svg" />
+         <img src="/icons/add.svg" />
       </div>
    </div>
 </template>

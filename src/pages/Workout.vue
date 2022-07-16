@@ -122,22 +122,20 @@
                </div>
             </div>
             <div v-else class="timer-end d-grid" @click="restart">
-               <img class="end-icon" src="@/assets/icons/restart.svg" />
+               <img class="end-icon" src="/icons/restart.svg" />
             </div>
             <div class="actions d-flex">
                <div class="return-action action-btn" @click="switchPrev()">
-                  <img class="action-icon" src="@/assets/icons/skip.svg" />
+                  <img class="action-icon" src="/icons/skip.svg" />
                </div>
                <div class="play-action action-btn" @click="playClick">
                   <img
                      class="action-icon"
-                     :src="`src/assets/icons/${
-                        interval.isPaused.value ? 'resume' : 'pause'
-                     }.svg`"
+                     :src="`/icons/${interval.isPaused.value ? 'resume' : 'pause'}.svg`"
                   />
                </div>
                <div class="skip-action action-btn" @click="switchNext()">
-                  <img class="action-icon" src="@/assets/icons/skip.svg" />
+                  <img class="action-icon" src="/icons/skip.svg" />
                </div>
             </div>
          </div>

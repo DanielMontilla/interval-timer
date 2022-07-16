@@ -86,8 +86,8 @@
       />
 
       <div v-if="type === 'number'" class="crements d-flex">
-         <img class="de crement" src="@/assets/icons/minus.svg" @click="decrement" />
-         <img class="in crement" src="@/assets/icons/plus.svg" @click="increment" />
+         <img class="de crement" src="/icons/minus.svg" @click="decrement" />
+         <img class="in crement" src="/icons/plus.svg" @click="increment" />
       </div>
    </div>
 </template>
