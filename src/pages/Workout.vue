@@ -211,7 +211,6 @@
 
    .timer-area {
       grid-area: timer-area;
-      position: relative;
       height: auto;
       padding: 0 var(--md);
       grid-template-columns: minmax(auto, var(--max-viewport));
