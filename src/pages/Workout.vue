@@ -23,11 +23,15 @@
       paused: true,
    });
 
-   watch(exercise, e => {
-      interval.reset({
-         time: e.secs,
-      });
-   });
+   watch(
+      exercise,
+      e => {
+         interval.reset({
+            time: e.secs,
+         });
+      },
+      { deep: true }
+   );
 
    const isRep = (i: number) => currentExerciseIndex.value.rep == i;
    const isExercise = (i: number, j: number) =>
@@ -94,15 +98,13 @@
 
 <template>
    <div class="workout page d-grid">
-      <div class="details">
-         <div class="name-area">
-            <ReturnBtn :back-path="'/select'" class="return-btn" />
-            <div class="name-text">
-               {{ workout.name }}
-            </div>
+      <div class="name-area">
+         <div class="name-text">
+            {{ workout.name }}
          </div>
       </div>
       <div class="timer-area d-grid max-width">
+         <ReturnBtn :back-path="'/select'" class="return-btn" />
          <div
             class="timer"
             :style="{
@@ -179,30 +181,35 @@
    .workout {
       grid-template-columns: 1fr;
       grid-template-rows: auto auto auto;
-      grid-template-areas: 'details' 'timer-area' 'exercise-list';
-   }
-   .details {
-      grid-area: details;
-      justify-self: start;
+      grid-template-areas: 'name-area' 'timer-area' 'exercise-list';
    }
    .name-area {
-      display: flex;
-      justify-content: start;
-      align-content: center;
-      align-items: center;
+      grid-area: name-area;
+      height: 100%;
+      width: 100%;
+      background-color: hsla(var(--bg-dark), 1);
    }
 
    .name-text {
       font-size: var(--xl3);
       font-weight: bold;
+      text-align: center;
    }
 
    .return-btn {
-      min-width: var(--xl5);
+      position: absolute;
+      top: var(--md);
+      left: var(--md);
+
+      height: var(--xl3);
+      width: var(--xl3);
+
+      z-index: 3;
    }
 
    .timer-area {
       grid-area: timer-area;
+      position: relative;
       height: auto;
       padding: 0 var(--md);
       grid-template-columns: minmax(auto, var(--max-viewport));

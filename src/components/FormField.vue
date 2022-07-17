@@ -96,8 +96,10 @@
    .field-cont {
       border-bottom: 3px solid;
       border-radius: var(--sx);
+      -webkit-border-radius: var(--sx);
       transition: all 0.2s;
       justify-content: start;
+      background-color: transparent;
    }
 
    .field-input {

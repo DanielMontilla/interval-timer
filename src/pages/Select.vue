@@ -65,7 +65,7 @@
       <Transition name="fade">
          <Menu v-if="showMenu" :options="menuOptions" :close="() => (showMenu = false)" />
       </Transition>
-      <Separator text="My Workouts" size="var(--xl2)" />
+      <Separator text="My Workouts" size="var(--xl2)" class="fixed" />
       <div class="workout-list">
          <div v-for="(workout, i) in workouts" class="workout-card d-grid">
             <div class="name-plate d-flex" @click="open(i)">
@@ -76,12 +76,16 @@
             <div class="details">
                <div class="detail d-flex">
                   <img class="detail-icon" src="/icons/time.svg" />
-                  {{ parseSecs(workout.time) }}
+                  <span>
+                     {{ parseSecs(workout.time) }}
+                  </span>
                </div>
                <div :style="{ margin: '0 var(--md)' }">|</div>
                <div class="detail d-flex">
                   <img class="detail-icon" src="/icons/workout.svg" />
-                  {{ workout.exercises.length }}
+                  <span>
+                     {{ workout.exercises.length }}
+                  </span>
                </div>
             </div>
             <div class="exercises">
@@ -97,7 +101,6 @@
 
 <style scoped>
    .select-workout {
-      position: relative;
       height: 100vh;
    }
    .workout-list > * + * {

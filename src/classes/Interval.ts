@@ -104,5 +104,10 @@ export default class Interval {
       this.completed.value = false;
 
       this.computeProgress();
+      return this;
    }
+
+   // public restart() {
+   //    this
+   // }
 }
