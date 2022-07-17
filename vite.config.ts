@@ -18,7 +18,7 @@ export default defineConfig({
             name: 'Interval App',
             short_name: 'interval',
             description: 'interval app for working out',
-            theme_color: '#0000000',
+            theme_color: '#0D1112',
             icons: [
                {
                   src: 'resources/android-chrome-192x192.png',

@@ -25,7 +25,7 @@
          >
             <img
                class="option-icon"
-               :src="`/icons/${iconSrc ? iconSrc : 'bullet'}.svg`"
+               :src="`/interval-timer/icons/${iconSrc ? iconSrc : 'bullet'}.svg`"
                :style="{
                   filter: `var(--f-${color ? color : 'white'})`,
                }"

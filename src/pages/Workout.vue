@@ -133,7 +133,9 @@
                <div class="play-action action-btn" @click="playClick">
                   <img
                      class="action-icon"
-                     :src="`/icons/${interval.isPaused.value ? 'resume' : 'pause'}.svg`"
+                     :src="`/interval-timer/icons/${
+                        interval.isPaused.value ? 'resume' : 'pause'
+                     }.svg`"
                   />
                </div>
                <div class="skip-action action-btn" @click="switchNext()">
