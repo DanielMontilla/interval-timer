@@ -1,7 +1,7 @@
 <script setup lang="ts">
    import { useWorkout, useVoice } from '@/services/_index';
    import { Interval } from '@/classes/_index';
-   import { computed, onUnmounted, ref, watch } from 'vue';
+   import { computed, onUnmounted, ref, watch, onMounted } from 'vue';
    import { ReturnBtn } from '@/components/_index';
 
    const { currentWorkout: workout } = useWorkout();
@@ -91,8 +91,23 @@
       }
    };
 
+   const timerEl = ref<HTMLDivElement>();
+   const keepSquare = () => {
+      if (!timerEl.value) return;
+
+      console.log(timerEl.value.clientWidth);
+
+      timerEl.value.style.height = `${timerEl.value.clientWidth}px`;
+   };
+
+   onMounted(() => {
+      keepSquare();
+      window.addEventListener('resize', keepSquare);
+   });
+
    onUnmounted(() => {
       interval.destroy(); // required. otherwise raf will trigger endlessly
+      window.removeEventListener('resize', keepSquare);
    });
 </script>
 
@@ -107,6 +122,7 @@
          <ReturnBtn :back-path="'/select'" class="return-btn" />
          <div
             class="timer"
+            ref="timerEl"
             :style="{
                '--percentage': interval.completed.value ? 0 : 1 - interval.progress.value,
             }"
@@ -211,7 +227,6 @@
 
    .timer-area {
       grid-area: timer-area;
-      height: auto;
       padding: 0 var(--md);
       grid-template-columns: minmax(auto, var(--max-viewport));
       grid-template-rows: auto;
@@ -229,14 +244,14 @@
    .timer {
       grid-area: timer;
       position: relative;
-      aspect-ratio: 1;
+      /* aspect-ratio: 1; */
 
       width: 100%;
 
       display: inline-grid;
       place-content: center;
 
-      grid-template: auto auto / auto;
+      grid-template: auto / auto;
    }
    .timer:before {
       content: '';
