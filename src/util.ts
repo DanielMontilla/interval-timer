@@ -56,3 +56,15 @@ export const recordLength = <T extends string | number | symbol>(
    }
    return count;
 };
+
+export const wholeDivide = (
+   dividend: number,
+   divisor: number
+): [quotient: number, remainder: number] => {
+   let quotient = Math.floor(dividend / divisor);
+   let remainder = dividend - quotient * divisor;
+
+   return [quotient, remainder];
+};
+
+export const isNumeric = (str: string) => /^-?\d+$/.test(str);

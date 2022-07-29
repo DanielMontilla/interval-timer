@@ -1,5 +1,12 @@
-<script setup lang="ts"></script>
+//
+<script setup lang="ts">
+   /* 🔌 services */
 
-<template>HI</template>
+   /* 📷 local state */
 
-<style></style>
+   /* 🔧 utility */
+</script>
+
+<template><div class="home"></div></template>
+
+<style scoped></style>

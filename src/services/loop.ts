@@ -4,7 +4,6 @@ import { recordLength } from '@/util';
 let next: number = 0;
 let previousTime: number;
 let raf: number | undefined = undefined;
-let fps: number;
 
 const callbacks: Record<number, LoopCallback> = {};
 
@@ -15,7 +14,6 @@ const begin = () => {
 
 const flush = (currentTime: number) => {
    let timeElapsed = currentTime - previousTime;
-   fps = 1000 / timeElapsed;
 
    update((timeElapsed *= 0.001));
 

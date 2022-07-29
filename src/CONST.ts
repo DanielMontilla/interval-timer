@@ -1,0 +1,16 @@
+export enum DURATION {
+   '1s' = 1000,
+   '5s' = DURATION['1s'] * 5,
+   '10s' = DURATION['1s'] * 10,
+   '15s' = DURATION['1s'] * 15,
+   '30s' = DURATION['1s'] * 30,
+   '60s' = DURATION['1s'] * 60,
+   '1m' = DURATION['60s'],
+   '5m' = DURATION['1m'] * 5,
+   '60m' = DURATION['1m'] * 60,
+   '1h' = DURATION['60m'],
+   '5h' = DURATION['1h'] * 5,
+   '24h' = DURATION['1h'] * 24,
+   '1d' = DURATION['24h'],
+   '2d' = DURATION['1d'] * 2,
+}

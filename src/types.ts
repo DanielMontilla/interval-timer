@@ -1,4 +1,4 @@
-import { defineComponent } from 'vue';
+import { defineComponent, Ref } from 'vue';
 
 export type vueComponent = ReturnType<typeof defineComponent>;
 
@@ -15,6 +15,8 @@ export interface Workout {
    exercises: Exercise[];
 }
 
+export type Workouts = Workout[];
+
 export type LoopCallback = (dt: number) => any;
 
 export interface IntervalOptions {
@@ -27,3 +29,13 @@ export interface IntervalOptions {
 }
 
 export type InputState = 'unfilled' | 'error' | 'completed';
+
+export interface InputData<T extends string | number | boolean = string> {
+   value: T | null;
+   state: InputState;
+   msgs?: string[];
+}
+
+export type InputValidation = (value: string) => { state: InputState; msgs?: string[] };
+
+export type SetBackRoute = (route: string | null) => void;
