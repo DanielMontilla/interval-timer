@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import useTheme from '@/services/theme';
+  import { useTheme } from '@/services/_index';
   import { onMounted } from 'vue';
 
   const { changeTheme } = useTheme();
@@ -29,12 +29,10 @@
       dark:text-white
       select-none
     ;
-
     .fade-enter-active,
     .fade-leave-active {
       transition: opacity 0.5s ease;
     }
-
     .fade-enter-from,
     .fade-leave-to {
       opacity: 0;
