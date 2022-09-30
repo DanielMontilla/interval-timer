@@ -2,7 +2,9 @@
 </script>
 
 <template>
-  SELECT
+  <div class="select-screen">
+    
+  </div>
 </template>
 
 <style lang="scss" scoped></style>

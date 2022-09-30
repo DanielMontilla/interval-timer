@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { useTheme } from '@/services/_index';
   import { onMounted } from 'vue';
+  import { Warning } from '@/components/_index';
 
   const { changeTheme } = useTheme();
 
@@ -12,6 +13,7 @@
 
 <template>
   <main>
+    <Warning/>
     <router-view v-slot="{ Component }">
       <transition name="fade">
         <component :is="Component"/>
@@ -25,8 +27,7 @@
     @apply 
       w-screen h-screen
       transition-colors
-      dark:bg-slate-700
-      dark:text-white
+      dark:bg-slate-700 dark:text-white
       select-none
     ;
     .fade-enter-active,

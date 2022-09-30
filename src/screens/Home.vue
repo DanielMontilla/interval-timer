@@ -2,7 +2,9 @@
 </script>
 
 <template>
-  HOME
+  <div class="home-screen">
+    
+  </div>
 </template>
 
 <style lang="scss" scoped>
