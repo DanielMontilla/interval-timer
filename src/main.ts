@@ -1,16 +1,16 @@
 import { createApp } from 'vue'
-import * as Router from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router';
+import InlineSvg from 'vue-inline-svg';
 import App from '@/App.vue'
 import routes from '@/routes';
-import '&/index.scss'
+import '@/index.css'
 
-const app = createApp(App);
-
-const router = Router.createRouter({
-  history: Router.createWebHashHistory(),
+const router = createRouter({
+  history: createWebHashHistory(),
   routes,
 });
 
-app.use(router);
-
-app.mount('#app');
+createApp(App)
+  .component('inline-svg', InlineSvg)
+  .use(router)
+  .mount('#app');

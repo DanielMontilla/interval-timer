@@ -2,10 +2,10 @@
 </script>
 
 <template>
-  <div class="home-screen">
-    
-  </div>
+   <div class="workout-page">
+
+   </div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 </style>

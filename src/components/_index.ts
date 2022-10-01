@@ -1,3 +1,4 @@
-import Warning from "@/components/Warning.vue";
+import Navigation from "@/components/Navigation.vue";
+import Input from "@/components/Input.vue";
 
-export { Warning };
+export { Navigation, Input };

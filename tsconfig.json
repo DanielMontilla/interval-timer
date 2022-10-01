@@ -15,8 +15,7 @@
     "baseUrl": ".",
     "types": ["node"],
     "paths": {
-      "@/*": ["./src/*"],
-      "&/*": ["./src/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
