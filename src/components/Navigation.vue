@@ -21,7 +21,7 @@
   .navegation-bar {
     @apply
       sticky w-full bottom-0 backdrop-blur-sm backdrop-opacity-75 h-16 pt-1
-      flex justify-evenly items-center
+      flex justify-around items-center
       transition-colors duration-75
       bg-white/30
       dark:bg-black/20
