@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { Input } from '@/components/_index';
   import { InputData } from '@/types';
-  import { lessThan, moreThan, moreThanNumeric, notEmpty, isNumber, isInt } from '@/util';
+  import { lessThan, lessThanNumeric, moreThanNumeric, notEmpty, isNumber, isInt } from '@/util';
   import { ref } from 'vue';
 
   const name = ref<InputData>({ content: '' });
@@ -14,21 +14,23 @@
       class="text-3xl"
       v-model:data="name" 
       label="workout name" 
-      :validators="[notEmpty, moreThan(3), lessThan(10)]"
+      :validators="[notEmpty, lessThan(50)]"
     />
     <Input 
       class="text-3xl"
       v-model:data="reps" 
       label="reps" 
-      :validators="[notEmpty, moreThanNumeric(0), isNumber, isInt]"
+      :validators="[isNumber, moreThanNumeric(0), lessThanNumeric(1001), isInt]"
     />
+
+    <div class="w-full border-b-2 border-white"/>
 
   </div>
 </template>
 
 <style scoped>
-  .create-page * + * {
+  .create-page .input-continer + .input-continer {
     @apply
-      mt-4
+      mt-2
   }
 </style>

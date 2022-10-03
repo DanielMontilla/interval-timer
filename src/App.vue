@@ -15,11 +15,11 @@
 
 <template>
   <main>
-    <!-- <div 
+    <div 
       class="absolute top-0 right-0 text-2xl z-10 h-8 aspect-square"
       v-text="theme == 'light' ? `🌑` : `🌕`"
       @click="toggleTheme"
-    /> -->
+    />
     <router-view v-slot="{ Component }">
       <div class="screen">
         <Transition name="fade">

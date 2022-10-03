@@ -17,8 +17,13 @@ export const moreThan = (i: number, withWhiteSpace = false): InputValidator => (
 })
 
 export const moreThanNumeric = (i: number): InputValidator => (n: string) => ({
-  isValid: Number(n) < i,
+  isValid: Number(n) > i,
   msg: `must be more than ${i}`
+})
+
+export const lessThanNumeric = (i: number): InputValidator => (n: string) => ({
+  isValid: Number(n) < i,
+  msg: `must be less than ${i}`
 })
 
 export const isInt: InputValidator = (n: string) => ({
