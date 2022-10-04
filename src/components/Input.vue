@@ -1,18 +1,18 @@
 <script setup lang="ts">
-  import { InputData, InputState, InputValidator } from '@/types';
+  import { InputData, InputState, InputValidator, InputType } from '@/types';
   import { computed, ref, toRef, watch } from 'vue';
 
-  interface InputProps {
-    data: InputData,
+  interface InputProps<T extends InputType> {
+    data: InputData<T>,
     validators?: InputValidator[]
     label?: string
   }
 
   interface InputEmits {
-    (e: 'update:data', data: InputData): void
+    <T extends InputType>(e: 'update:data', data: InputData<T>): void
   }
 
-  const { data, validators, label } = defineProps<InputProps>();
+  const { data, validators, label } = defineProps<InputProps<InputType>>();
   const _label = label ? label : '';
   const _type = typeof data.content == 'number' ? 'number' : 'text';
 
