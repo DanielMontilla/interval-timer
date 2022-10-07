@@ -1,4 +1,4 @@
-import { InputValidator } from "@/types";
+import { Exercise, InputValidator } from "@/types";
 
 /* validators! */
 export const notEmpty: InputValidator = (n: string) => ({
@@ -35,3 +35,7 @@ export const isNumber: InputValidator = (n: string) => ({
   isValid: Number(n) != Number.NaN,
   msg: `must be a number`
 })
+
+/* shared contants */
+export const ACTIONS = ['add', 'copy', 'moveup', 'movedown', 'delete'] as const;
+export const DEF_EXERCISE: Exercise = { name: {content: ''}, duration: {content: 5} };

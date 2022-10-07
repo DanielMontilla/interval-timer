@@ -76,7 +76,7 @@
 <style scoped>
   .input-container {
     @apply 
-      w-full relative pb-5
+      relative pb-5
   }
     
   .input-field {
@@ -100,7 +100,7 @@
 
   .msg {
     @apply
-      absolute right-2 bottom-0 text-right text-base
+      absolute right-2 bottom-0 text-right text-base whitespace-nowrap
       text-red-700
       dark:text-red-600
   }
