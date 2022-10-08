@@ -31,11 +31,12 @@ export const isInt: InputValidator = (n: string) => ({
   msg: `must be integer`
 })
 
+// TODO: FIX
 export const isNumber: InputValidator = (n: string) => ({
-  isValid: Number(n) != Number.NaN,
+  isValid: !Number.isNaN(Number(n)),
   msg: `must be a number`
 })
 
 /* shared contants */
 export const ACTIONS = ['add', 'copy', 'moveup', 'movedown', 'delete'] as const;
-export const DEF_EXERCISE: Exercise = { name: {content: ''}, duration: {content: 5} };
+export const getDefExercise = (): Exercise => ({ name: {}, duration: {} });

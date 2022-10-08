@@ -25,7 +25,9 @@
     <router-view v-slot="{ Component }">
       <div class="screen">
         <Transition name="fade">
-          <component :is="Component" class="page"/>
+          <KeepAlive :max="4">
+            <component :is="Component" class="page"/>
+          </KeepAlive>
         </Transition>
         <Navigation/>
       </div>

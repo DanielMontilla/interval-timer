@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { InputData, InputState, InputValidator, InputType } from '@/types';
-  import { computed, ref, toRef, watch } from 'vue';
+  import { ref } from 'vue';
 
   interface InputProps<T extends InputType> {
     data: InputData<T>,
@@ -19,7 +19,7 @@
   const emit = defineEmits<InputEmits>();
   const msgs = ref<string[]>([]);
   const focused = ref<boolean>(false);
-  const empty = ref<boolean>(data.content.toString().length <= 0);
+  const empty = ref<boolean>(data.content ? data.content.toString().length <= 0 : true);
   const inputEl = ref<HTMLInputElement>();
   
   const focus = () => {
