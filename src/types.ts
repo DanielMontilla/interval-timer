@@ -9,7 +9,9 @@ export interface InputData<T extends InputType> {
 export type InputValidator = (n: string) => { isValid: boolean, msg: string }
 export type Action = typeof ACTIONS[number];
 
-export type Exercise = {
+export interface Exercise {
   name: InputData<string>,
   duration: InputData<number>
 };
+
+export type Workout = Exercise[];

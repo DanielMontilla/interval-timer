@@ -1,14 +1,16 @@
 <script setup lang="ts">
   import { onMounted } from 'vue';
-  import { useTheme, useRouter } from '@/services/_index';
+  import { useTheme, useRouter, useState } from '@/services/_index';
   import { Navigation } from '@/components/_index'
 
   const { toggleTheme, theme, changeTheme } = useTheme();
+  const { init } = useState();
   const router = useRouter();
 
   onMounted(() => {
     changeTheme('dark');
     router.push({name: 'create'})
+    init();
   })
 
 </script>
