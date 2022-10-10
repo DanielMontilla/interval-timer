@@ -27,6 +27,10 @@
     inputEl.value.focus();
   }
 
+  const validate = () => {
+    console.log('works');
+  }
+
   const update = (e: Event | string) => {
     let content: string;
     if (typeof e === 'string') {
@@ -51,6 +55,8 @@
     emit('update:data', { state, content });
     empty.value = content.trim().length <= 0;
   }
+
+  defineExpose({ validate })
 </script>
 
 <template>

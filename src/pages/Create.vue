@@ -1,14 +1,19 @@
 <script setup lang="ts">
   import { Input } from '@/components/_index';
-  import { InputData, Exercise, Action } from '@/types';
+  import { InputData, Exercise, Action, InputElRef, InputEl } from '@/types';
   import { lessThan, lessThanNumeric, moreThanNumeric, notEmpty, isNumber, getDefExercise, isInt, ACTIONS } from '@/util';
-  import { ref } from 'vue';
+  import { ref, VNodeRef } from 'vue';
 
   const name = ref<InputData<string>>({});
   const reps = ref<InputData<number>>({});
 
   let _next = 0; // must have unique id for each exercise to mantain state between input components
   const exercises = ref<{id: number, exercise: Exercise}[]>([{id: _next++, exercise: getDefExercise()}]);
+
+  let _triggers: InputElRef[] = [];
+  let _addTrigger = (el: VNodeRef) => {
+
+  }
 
   const add = (at: number, exercise: Exercise = getDefExercise()) => exercises.value.splice(at, 0, { id: _next++, exercise: exercise })
 
@@ -72,6 +77,8 @@
   const submit = () => {
     const fail = () => {
       console.log('failed');
+
+
       return false;
     }
 
@@ -97,7 +104,7 @@
 
 <template>
   <div class="create-page">
-    <Input 
+    <Input :ref="el => _addTrigger(el)"
       class="text-3xl"
       v-model:data="name" 
       label="workout name" 

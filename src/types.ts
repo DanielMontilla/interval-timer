@@ -1,4 +1,6 @@
 import { ACTIONS } from "@/util";
+import { Input } from "@/components/_index";
+import { Ref } from "vue";
 
 export type InputState = 'invalid' | 'valid'
 export type InputType = string | number;
@@ -15,3 +17,6 @@ export interface Exercise {
 };
 
 export type Workout = Exercise[];
+
+export type InputEl = InstanceType<typeof Input>
+export type InputElRef = Ref<InputEl | null>
