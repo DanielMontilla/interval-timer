@@ -9,7 +9,7 @@
 
   onMounted(() => {
     changeTheme('dark');
-    router.push({name: 'create'})
+    // router.push({name: 'workout'})
     init();
   })
 
@@ -47,7 +47,7 @@
 
   .screen {
     @apply 
-      max-w-3xl w-screen
+      max-w-2xl w-screen
       overflow-x-auto scrollbar-hide
       transition-colors
       bg-background-light md:drop-shadow-[0_28px_28px_rgba(0,0,0,0.4)]

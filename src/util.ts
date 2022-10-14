@@ -42,4 +42,11 @@ export const isNumber: InputValidator = (n: string) => ({
 export const ACTIONS = ['add', 'copy', 'moveup', 'movedown', 'delete'] as const;
 export const getDefExercise = (): Exercise => ({ name: {}, duration: {} });
 
-export const isInputEl = (el: VNodeRef): el is InputEl => el;
+// export const isInputEl = (el: VNodeRef): el is InputEl => el;
+
+/* actual util */
+export const clamp = (n: number, {min, max} = { min: 0, max: 1 }) => {
+  if (n < min) return min;
+  if (n > max) return max;
+  return n;
+}
