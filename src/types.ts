@@ -20,3 +20,5 @@ export type Workout = Exercise[];
 
 export type InputEl = InstanceType<typeof Input>
 export type InputElRef = Ref<InputEl | null>
+
+export type LoopCallback = (dt: number) => void;

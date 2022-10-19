@@ -11,6 +11,7 @@
   const _percentage = computed(() => clamp(props.percentage, { min: 0, max: 100 }));
 
   const contEl = ref<HTMLDivElement>();
+
   /** To guarantee aspect ratio remains at 1/1 */
   const resize = () => {
     if (!contEl.value) return;
@@ -21,7 +22,9 @@
     window.addEventListener('resize', resize);
     resize();
   });
-  onUnmounted(() => window.removeEventListener('resize', resize));
+  onUnmounted(() => {
+    window.removeEventListener('resize', resize);
+  });
 </script>
 
 <template>
