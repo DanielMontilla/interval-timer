@@ -18,7 +18,7 @@
 <template>
   <main>
     <div 
-      class="absolute top-0 right-0 text-2xl z-10 h-8 aspect-square"
+      class="absolute top-0 right-0 text-2xl z-20 h-8 aspect-square"
       v-text="theme == 'light' ? `🌑` : `🌕`"
       @click="toggleTheme"
     />

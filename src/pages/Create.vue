@@ -11,7 +11,7 @@
   const exercises = ref<{id: number, exercise: Exercise}[]>([{id: _next++, exercise: getDefExercise()}]);
 
   let _triggers: InputElRef[] = [];
-  let _addTrigger = (el: VNodeRef) => {
+  let _addTrigger = (el: Element) => {
 
   }
 
@@ -77,8 +77,6 @@
   const submit = () => {
     const fail = () => {
       console.log('failed');
-
-
       return false;
     }
 
@@ -104,7 +102,7 @@
 
 <template>
   <div class="create-page">
-    <Input :ref="el => _addTrigger(el)"
+    <Input
       class="text-3xl"
       v-model:data="name" 
       label="workout name" 
