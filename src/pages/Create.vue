@@ -1,8 +1,8 @@
 <script setup lang="ts">
   import { Input } from '@/components/_index';
-  import { InputData, Exercise, Action, InputElRef, InputEl } from '@/types';
-  import { lessThan, lessThanNumeric, moreThanNumeric, notEmpty, isNumber, getDefExercise, isInt, ACTIONS } from '@/util';
-  import { ref, VNodeRef } from 'vue';
+  import { InputData, Exercise, Action, InputEl } from '@/types';
+  import { lessThan, lessThanNumeric, moreThanNumeric, notEmpty, isNumber, getDefExercise, isInt, ACTIONS, isInputEl } from '@/util';
+  import { ComponentPublicInstance, ref, VNodeRef } from 'vue';
 
   const name = ref<InputData<string>>({});
   const reps = ref<InputData<number>>({});
@@ -10,10 +10,8 @@
   let _next = 0; // must have unique id for each exercise to mantain state between input components
   const exercises = ref<{id: number, exercise: Exercise}[]>([{id: _next++, exercise: getDefExercise()}]);
 
-  let _triggers: InputElRef[] = [];
-  let _addTrigger = (el: Element) => {
-
-  }
+  let _triggers: InputEl[] = [];
+  let _addTrigger = (el: Element | null | ComponentPublicInstance) => isInputEl(el) ? _triggers.push(el) : null;
 
   const add = (at: number, exercise: Exercise = getDefExercise()) => exercises.value.splice(at, 0, { id: _next++, exercise: exercise })
 
@@ -102,13 +100,13 @@
 
 <template>
   <div class="create-page">
-    <Input
+    <Input :ref="_addTrigger"
       class="text-3xl"
       v-model:data="name" 
       label="workout name" 
       :validators="[notEmpty, lessThan(50)]"
     />
-    <Input 
+    <Input :ref="_addTrigger"
       class="text-3xl"
       v-model:data="reps" 
       label="reps" 
@@ -117,15 +115,15 @@
 
     <div class="w-full border-b-2 border-black/10 dark:border-white/10 mb-4"/> <!-- separator! -->
 
-    <TransitionGroup> <!-- TODO: add cool animations! -->
+    <!-- <TransitionGroup> TODO: add cool animations! -->
       <div v-for="({id, exercise}, i) in exercises" class="exercise-card" :key="id">
-        <Input
+        <Input :ref="_addTrigger"
           class="text-xl"
           v-model:data="exercise.name"
           label="exercise name"
           :validators="[notEmpty, lessThan(24)]"
         />
-        <Input
+        <Input :ref="_addTrigger"
           class="text-xl"
           v-model:data="exercise.duration"
           label="duration"
@@ -138,7 +136,7 @@
           </div>
         </div>
       </div>
-    </TransitionGroup>
+    <!-- </TransitionGroup> -->
     <div class="w-full border-b-2 border-black/10 dark:border-white/10 mb-4"/> <!-- separator! -->
     <div v-text="`save`" @click="submit"/>
     <div v-text="`clear`"/>

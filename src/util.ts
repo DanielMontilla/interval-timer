@@ -1,4 +1,4 @@
-import { Exercise, InputEl, InputValidator } from "@/types";
+import { Exercise, InputEl, InputElRef, InputValidator } from "@/types";
 import { VNodeRef } from "vue";
 
 /* validators! */
@@ -42,7 +42,7 @@ export const isNumber: InputValidator = (n: string) => ({
 export const ACTIONS = ['add', 'copy', 'moveup', 'movedown', 'delete'] as const;
 export const getDefExercise = (): Exercise => ({ name: {}, duration: {} });
 
-// export const isInputEl = (el: VNodeRef): el is InputEl => el;
+export const isInputEl = (el: any): el is InputEl => el.validate != undefined;
 
 /* actual util */
 export const clamp = (n: number, {min, max} = { min: 0, max: 1 }) => {
