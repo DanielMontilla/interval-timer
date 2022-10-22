@@ -2,7 +2,7 @@
   import { Input } from '@/components/_index';
   import { InputData, Exercise, Action, InputEl } from '@/types';
   import { lessThan, lessThanNumeric, moreThanNumeric, notEmpty, isNumber, getDefExercise, isInt, ACTIONS, isInputEl } from '@/util';
-  import { ComponentPublicInstance, ref, VNodeRef } from 'vue';
+  import { ComponentPublicInstance, onBeforeUpdate, ref } from 'vue';
 
   const name = ref<InputData<string>>({});
   const reps = ref<InputData<number>>({});
@@ -10,10 +10,13 @@
   let _next = 0; // must have unique id for each exercise to mantain state between input components
   const exercises = ref<{id: number, exercise: Exercise}[]>([{id: _next++, exercise: getDefExercise()}]);
 
-  let _triggers: InputEl[] = [];
-  let _addTrigger = (el: Element | null | ComponentPublicInstance) => isInputEl(el) ? _triggers.push(el) : null;
+  let _inputeEls: InputEl[] = [];
+  let _addInputEl = (el: Element | null | ComponentPublicInstance) => {
+    if (el == null) return;
+    isInputEl(el) ? _inputeEls.push(el) : null;
+  }
 
-  const add = (at: number, exercise: Exercise = getDefExercise()) => exercises.value.splice(at, 0, { id: _next++, exercise: exercise })
+  const add = (at: number, exercise: Exercise = getDefExercise()) => exercises.value.splice(at, 0, { id: _next++, exercise: exercise });
 
   const swap = async (i1: number, i2: number) => {
     const len = exercises.value.length - 1;
@@ -74,7 +77,7 @@
 
   const submit = () => {
     const fail = () => {
-      console.log('failed');
+      _inputeEls.forEach( i => i.state != 'valid' ? i.validate() : null);
       return false;
     }
 
@@ -95,18 +98,25 @@
 
     succ();
   }
+
+  const clear = () => {
+    console.log(_inputeEls);
+  }
+
+  // NOTE: every time the dom is updated, the `:ref="..."` are ran again! this is super inefficient bc it runs on every input
+  onBeforeUpdate(() => _inputeEls = []);
   
 </script>
 
 <template>
   <div class="create-page">
-    <Input :ref="_addTrigger"
+    <Input :ref="_addInputEl"
       class="text-3xl"
       v-model:data="name" 
       label="workout name" 
       :validators="[notEmpty, lessThan(50)]"
     />
-    <Input :ref="_addTrigger"
+    <Input :ref="_addInputEl"
       class="text-3xl"
       v-model:data="reps" 
       label="reps" 
@@ -117,13 +127,13 @@
 
     <!-- <TransitionGroup> TODO: add cool animations! -->
       <div v-for="({id, exercise}, i) in exercises" class="exercise-card" :key="id">
-        <Input :ref="_addTrigger"
+        <Input :ref="_addInputEl"
           class="text-xl"
           v-model:data="exercise.name"
           label="exercise name"
           :validators="[notEmpty, lessThan(24)]"
         />
-        <Input :ref="_addTrigger"
+        <Input :ref="_addInputEl"
           class="text-xl"
           v-model:data="exercise.duration"
           label="duration"
@@ -138,8 +148,13 @@
       </div>
     <!-- </TransitionGroup> -->
     <div class="w-full border-b-2 border-black/10 dark:border-white/10 mb-4"/> <!-- separator! -->
-    <div v-text="`save`" @click="submit"/>
-    <div v-text="`clear`"/>
+    <div class="flex w-full justify-evenly">
+      <div class="btn save-btn" v-text="`save`" @click="submit"/>
+      <div class="btn clear-btn" v-text="`clear`" @click="clear"/>
+    </div>
+    <div v-if="true">
+
+    </div>
   </div>
 </template>
 
@@ -168,4 +183,22 @@
     @apply
     h-full w-full aspect-square
   }
+
+  .btn {
+    @apply
+      text-3xl font-bold py-4 pt-3 px-5 rounded-md leading-none min-w-[100px]
+      text-white text-center
+  }
+
+  .save-btn {
+    @apply
+      bg-green-700
+      dark:bg-green-600
+  }
+  .clear-btn {
+    @apply
+      bg-rose-800
+      dark:bg-rose-700
+  }
+
 </style>

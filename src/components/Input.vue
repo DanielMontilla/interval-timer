@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { InputData, InputState, InputValidator, InputType } from '@/types';
-  import { ref } from 'vue';
+  import { computed, onMounted, ref } from 'vue';
 
   interface InputProps<T extends InputType> {
     data: InputData<T>,
@@ -12,14 +12,19 @@
     <T extends InputType>(e: 'update:data', data: InputData<T>): void
   }
 
-  const { data, validators, label } = defineProps<InputProps<InputType>>();
-  const _label = label ? label : '';
-  const _type = typeof data.content == 'number' ? 'number' : 'text';
+  const props = defineProps<InputProps<InputType>>();
+
+  const content = computed(() => props.data.content);
+  const state = computed(() => props.data.state);
+  const validators = computed(() => props.validators);
+
+  const _label = computed(() => props.label ? props.label : ''); // TODO: Change to computed prop value
+  const _type = computed(() => typeof content.value == 'number' ? 'number' : 'text'); // TODO: Change to computed prop value
 
   const emit = defineEmits<InputEmits>();
   const msgs = ref<string[]>([]);
   const focused = ref<boolean>(false);
-  const empty = ref<boolean>(data.content ? data.content.toString().length <= 0 : true);
+  const empty = computed(() => content.value ? content.value.toString().length <= 0 : true);
   const inputEl = ref<HTMLInputElement>();
   
   const focus = () => {
@@ -27,48 +32,45 @@
     inputEl.value.focus();
   }
 
-  const validate = () => {
-    console.log('works');
-  }
-
-  const update = (e: Event | string) => {
-    let content: string;
+  const validate = (e?: Event | string) => {
+    let newContent: string;
     if (typeof e === 'string') {
-      content = e;
+      newContent = e;
+    } else if (!e) {
+      newContent = content.value ? `${content.value}` : '';
     } else {
       let el = e.target as HTMLInputElement;
-      content = el.value;
+      newContent = el.value;
     }
 
-    let state: InputState = 'valid';
+    let newState: InputState = 'valid';
     msgs.value.splice(0, msgs.value.length);
-    if (validators) {
-      for (const validator of validators) {
-        let { isValid, msg }= validator(content);
+    if (validators.value) {
+      for (const validator of validators.value) {
+        let { isValid, msg }= validator(newContent);
         if (!isValid) {
-          state = 'invalid';
+          newState = 'invalid';
           msgs.value.push(msg);
         }
       }
     }
 
-    emit('update:data', { state, content });
-    empty.value = content.trim().length <= 0;
+    emit('update:data', { state: newState, content: newContent });
   }
 
-  defineExpose({ validate })
+  defineExpose({ validate, state })
 </script>
 
 <template>
   <div class="input-container" :class="[{'in-focus': focused || !empty}]" @click="focus">
-    <div class="input-field" :class="{'is-valid': data.state == 'valid', 'is-invalid': data.state == 'invalid'}">
+    <div class="input-field" :class="{'is-valid': state == 'valid', 'is-invalid': state == 'invalid'}">
       <div v-text="_label" class="label" />
       <input
         ref="inputEl"
         :value="data.content"
         :type="_type"
         autocorrect="false"
-        @input="update"
+        @input="validate"
         @focusin="focused = true"
         @focusout="focused = false"
       />
