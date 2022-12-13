@@ -14,7 +14,7 @@ module.exports = {
         },
         background: {
           dark: 'hsl(0, 0%, 12%)',
-          light: 'hsl(0, 0%, 60%)'
+          light: 'hsl(0, 0%, 75%)'
         },
         void: {
           dark: 'hsl(0, 0%, 6%)',

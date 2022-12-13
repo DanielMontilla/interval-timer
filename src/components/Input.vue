@@ -26,6 +26,12 @@
   const focused = ref<boolean>(false);
   const empty = computed(() => content.value ? content.value.toString().length <= 0 : true);
   const inputEl = ref<HTMLInputElement>();
+
+  const clear = () => {
+    props.data.content = '';
+    props.data.state = undefined;
+    msgs.value.splice(0, msgs.value.length);
+  }
   
   const focus = () => {
     if (!inputEl.value) return;
@@ -58,7 +64,7 @@
     emit('update:data', { state: newState, content: newContent });
   }
 
-  defineExpose({ validate, state })
+  defineExpose({ validate, state, clear })
 </script>
 
 <template>
@@ -115,7 +121,7 @@
 
   .label {
     @apply
-      absolute opacity-50 top-[35%] leading-none transition-all ease-in
+      absolute opacity-50 top-[35%] leading-none transition-all ease-linear duration-75
   }
 
   .in-focus .label {

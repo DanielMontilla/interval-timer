@@ -9,7 +9,6 @@
 
   onMounted(() => {
     changeTheme('dark');
-    // router.push({name: 'workout'})
     init();
   })
 
@@ -56,7 +55,7 @@
 
   .page {
     @apply
-      min-h-screen p-2
+      min-h-screen
   }
 
   .fade-enter-active,

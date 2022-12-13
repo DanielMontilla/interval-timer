@@ -1,14 +1,16 @@
 <script setup lang="ts">
-  import { Input } from '@/components/_index';
-  import { InputData, Exercise, Action, InputEl } from '@/types';
-  import { lessThan, lessThanNumeric, moreThanNumeric, notEmpty, isNumber, getDefExercise, isInt, ACTIONS, isInputEl } from '@/util';
+  import { Input, Button } from '@/components/_index';
+  import { useState } from '@/services/_index';
+  import { InputData, Action, InputEl, InputExercise } from '@/types';
+  import { lessThan, lessThanNumeric, moreThanNumeric, notEmpty, isNumber, getDefExercise, isInt, ACTIONS, isInputEl, waitMs } from '@/util';
   import { ComponentPublicInstance, onBeforeUpdate, ref } from 'vue';
+  import { vOnClickOutside } from '@vueuse/components';
 
   const name = ref<InputData<string>>({});
   const reps = ref<InputData<number>>({});
 
   let _next = 0; // must have unique id for each exercise to mantain state between input components
-  const exercises = ref<{id: number, exercise: Exercise}[]>([{id: _next++, exercise: getDefExercise()}]);
+  const exercises = ref<{id: number, exercise: InputExercise}[]>([{id: _next++, exercise: getDefExercise()}]);
 
   let _inputeEls: InputEl[] = [];
   let _addInputEl = (el: Element | null | ComponentPublicInstance) => {
@@ -16,7 +18,7 @@
     isInputEl(el) ? _inputeEls.push(el) : null;
   }
 
-  const add = (at: number, exercise: Exercise = getDefExercise()) => exercises.value.splice(at, 0, { id: _next++, exercise: exercise });
+  const add = (at: number, exercise: InputExercise = getDefExercise()) => exercises.value.splice(at, 0, { id: _next++, exercise: exercise });
 
   const swap = async (i1: number, i2: number) => {
     const len = exercises.value.length - 1;
@@ -50,7 +52,7 @@
     // validating inputs:
     if (position > len || position < 0) return;
 
-    let eCopy: Exercise = Object.create(exercises.value[position].exercise);
+    let eCopy: InputExercise = Object.create(exercises.value[position].exercise);
 
     add(position, eCopy);
   }
@@ -74,42 +76,61 @@
         break;
     }
   }
-
-  const submit = () => {
-    const fail = () => {
-      _inputeEls.forEach( i => i.state != 'valid' ? i.validate() : null);
+  
+  const saving = ref<boolean>(false);
+  const submit = async () => {
+    
+    let canSubmit = true;
+    _inputeEls.forEach(i => {
+      if (i.state != 'valid') {
+        canSubmit = false;
+        i.validate();
+      }
+    });
+    
+    if (!canSubmit) {
+      // TODO: animations
       return false;
     }
-
-    const succ = () => {
-      console.log('succeccscc');
-      return true;
-    }
-
-    if (name.value.state != 'valid') return fail();
-    if (reps.value.state != 'valid') return fail();
-
-    for (const { exercise } of exercises.value) {
-      let { state: nState } = exercise.name;
-      let { state: dState } = exercise.duration;
-
-      if (nState != 'valid' || dState != 'valid') return fail();
-    }
-
-    succ();
+    
+    saving.value = true;
+    const { addWorkout } = useState();
+    
+    await waitMs(100);
+    saving.value = false;
+    addWorkout({
+      name: name.value.content as string,
+      reps: reps.value.content as number,
+      exercises: exercises.value.map(
+        ({ exercise: { name, duration } }) => ({name: name.content as string, duration: duration.content as number})
+      )
+    }, { select: true, redirect: true })
+      
+    return true;
   }
 
+
+  const allowedClear = ref(false);
+  const disallow = () => allowedClear.value = false;
   const clear = () => {
-    console.log(_inputeEls);
+    if (!allowedClear.value) {
+      allowedClear.value = true;
+      return;
+    }
+    allowedClear.value = false;
+    _inputeEls.forEach(i => i.clear());
+  };
+
+  const reset = () => {
+    
   }
 
   // NOTE: every time the dom is updated, the `:ref="..."` are ran again! this is super inefficient bc it runs on every input
   onBeforeUpdate(() => _inputeEls = []);
-  
 </script>
 
 <template>
-  <div class="create-page">
+  <div class="create-page p-2">
     <Input :ref="_addInputEl"
       class="text-3xl"
       v-model:data="name" 
@@ -125,35 +146,43 @@
 
     <div class="w-full border-b-2 border-black/10 dark:border-white/10 mb-4"/> <!-- separator! -->
 
-    <!-- <TransitionGroup> TODO: add cool animations! -->
-      <div v-for="({id, exercise}, i) in exercises" class="exercise-card" :key="id">
-        <Input :ref="_addInputEl"
-          class="text-xl"
-          v-model:data="exercise.name"
-          label="exercise name"
-          :validators="[notEmpty, lessThan(24)]"
-        />
-        <Input :ref="_addInputEl"
-          class="text-xl"
-          v-model:data="exercise.duration"
-          label="duration"
-          :validators="[isNumber, moreThanNumeric(0), lessThanNumeric(3600 + 1), isInt]"
-        />
-        <div class="actions">
-          <!-- TODO: maybe figure out how to add cool animations to list... ? -->
-          <div v-for="action in ACTIONS" class="action-btn" @click="handleAction(action, i)">
-            <inline-svg :src="`icons/${action}.svg`" />
-          </div>
+    <div v-for="({id, exercise}, i) in exercises" class="exercise-card" :key="id">
+      <Input :ref="_addInputEl"
+        class="text-xl"
+        v-model:data="exercise.name"
+        label="exercise name"
+        :validators="[notEmpty, lessThan(24)]"
+      />
+      <Input :ref="_addInputEl"
+        class="text-xl"
+        v-model:data="exercise.duration"
+        label="duration"
+        :validators="[isNumber, moreThanNumeric(0), lessThanNumeric(3600 + 1), isInt]"
+      />
+      <div class="actions">
+        <div v-for="action in ACTIONS" class="action-btn" @click="handleAction(action, i)">
+          <inline-svg :src="`icons/${action}.svg`" />
         </div>
       </div>
-    <!-- </TransitionGroup> -->
+    </div>
     <div class="w-full border-b-2 border-black/10 dark:border-white/10 mb-4"/> <!-- separator! -->
     <div class="flex w-full justify-evenly">
-      <div class="btn save-btn" v-text="`save`" @click="submit"/>
-      <div class="btn clear-btn" v-text="`clear`" @click="clear"/>
-    </div>
-    <div v-if="true">
-
+      <Button class="btn save-btn"
+        :on-click="submit"
+        :clickable="!saving"
+      >
+        <inline-svg class="save-load-icon" v-if="saving" src="icons/spinner.svg"/>
+        <div v-else v-text="`save`"/>
+      </Button>
+      <Button class="btn clear-btn" 
+        :on-click="clear" 
+        v-on-click-outside="disallow"
+      >
+        <Transition mode="out-in">
+          <div v-if="allowedClear" v-text="`sure?`"/>
+          <div v-else v-text="`clear`"/>
+        </Transition>
+      </Button>
     </div>
   </div>
 </template>
@@ -186,8 +215,13 @@
 
   .btn {
     @apply
-      text-3xl font-bold py-4 pt-3 px-5 rounded-md leading-none min-w-[100px]
-      text-white text-center
+      text-3xl font-bold py-4 pt-3 px-5 rounded-md leading-none w-[112px] max-h-[54px]
+      text-white flex content-center items-center justify-center place-content-center
+  }
+
+  .save-load-icon {
+    @apply
+      text-white aspect-square h-12 w-12 animate-spin mt-1;
   }
 
   .save-btn {
@@ -199,6 +233,16 @@
     @apply
       bg-rose-800
       dark:bg-rose-700
+  }
+
+  .v-enter-active,
+  .v-leave-active {
+    transition: opacity 0.05s ease;
+  }
+
+  .v-enter-from,
+  .v-leave-to {
+    opacity: 0;
   }
 
 </style>

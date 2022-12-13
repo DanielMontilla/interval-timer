@@ -1,4 +1,4 @@
-import { Exercise, InputEl, InputElRef, InputValidator } from "@/types";
+import { Exercise, InputEl, InputElRef, InputExercise, InputValidator } from "@/types";
 import { VNodeRef } from "vue";
 
 /* validators! */
@@ -40,7 +40,7 @@ export const isNumber: InputValidator = (n: string) => ({
 
 /* shared contants */
 export const ACTIONS = ['add', 'copy', 'moveup', 'movedown', 'delete'] as const;
-export const getDefExercise = (): Exercise => ({ name: {}, duration: {} });
+export const getDefExercise = (): InputExercise => ({ name: {}, duration: {} });
 
 export const isInputEl = (el: any): el is InputEl => el.validate != undefined;
 
@@ -49,4 +49,38 @@ export const clamp = (n: number, {min, max} = { min: 0, max: 1 }) => {
   if (n < min) return min;
   if (n > max) return max;
   return n;
+}
+
+export const wait = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
+export const waitMs = wait;
+export const waitS = (secs: number) => wait(secs * 1000);
+
+// TODO: copy from vue-idle
+// export const randPick = <T>(arr: T[]): T => {
+  
+// }
+
+/**
+ * @description used to construct complete config objects from incomplete/missing config.
+ * @param config partial or missing config
+ * @param def values to set for missing config properties
+ * @returns complete config object
+ */
+ export const defineOptions = <T extends Object> (
+  config: Partial<T> | undefined,
+  def: T
+): T => {
+
+  if (!config) return def;
+  
+  let res: T = {...config} as T;
+
+  for (const key in def) {
+    if (Object.prototype.hasOwnProperty.call(def, key)) {
+      const objectKey = key as keyof T;
+      if (!(objectKey in config)) res[objectKey] = def[key];
+    }
+  }
+
+  return res;
 }

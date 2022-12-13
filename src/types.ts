@@ -11,12 +11,21 @@ export interface InputData<T extends InputType> {
 export type InputValidator = (n: string) => { isValid: boolean, msg: string }
 export type Action = typeof ACTIONS[number];
 
-export interface Exercise {
+export interface InputExercise {
   name: InputData<string>,
   duration: InputData<number>
 };
 
-export type Workout = Exercise[];
+export interface Exercise {
+  name: string
+  duration: number
+};
+
+export interface Workout {
+  name: string,
+  reps: number,
+  exercises: Exercise[];
+};
 
 export type InputEl = InstanceType<typeof Input>
 export type InputElRef = Ref<InputEl>

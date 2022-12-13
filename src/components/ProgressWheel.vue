@@ -8,7 +8,7 @@
   }
 
   const props = defineProps<ProgressWheelProps>();
-  const _percentage = computed(() => clamp(props.percentage, { min: 0, max: 100 }));
+  const _percentage = computed(() => clamp(props.percentage, { min: 0, max: 1 }));
 
   const contEl = ref<HTMLDivElement>();
 
@@ -46,7 +46,7 @@
     --thickness: 33%;
 
     --total: calc(360deg - var(--gap));
-    --completed: calc(var(--total) * var(--percentage) / 100);
+    --completed: calc(var(--total) * var(--percentage));
 
     /* background: conic-gradient(green var(--percentage),transparent 0); */
 

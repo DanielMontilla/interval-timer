@@ -2,18 +2,15 @@
   import { useState, useLoop } from '@/services/_index';
   import { ProgressWheel } from '@/components/_index';
   import { computed, onActivated, onDeactivated, ref } from 'vue';
-import { Workout } from '@/types';
+  import { Workout } from '@/types';
 
+  let _loopId = 0;
   const { workout } = useState();
   const { add, remove } = useLoop();
 
-  let _loopId = 0;
   const paused = ref<boolean>(true);
-  const progress = ref<number>(0);
-  let _exerciseIndex = ref<number>(0);
-  const exercise = computed(() => {
-    return (workout.value as Workout)[_exerciseIndex.value];
-  });
+  const progress = ref<number>(0.99);
+  const exerciseIndex = ref<number>(0);
 
   const handleLoop = (dt: number) => {
     
@@ -28,8 +25,8 @@ import { Workout } from '@/types';
 
 <template>
   <div class="workout-page">
-    <div v-if="workout">
-      <ProgressWheel :percentage="0"/>
+    <div v-if="workout" class="w-full p-2">
+      <ProgressWheel :percentage="progress"/>
 
     </div>
     <div v-else>

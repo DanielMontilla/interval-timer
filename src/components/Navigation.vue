@@ -1,14 +1,12 @@
 <script setup lang="ts">
-  import routes from '@/routes';
   import { useRouter } from '@/services/_index'
-
-  const router = useRouter();
+  const { goToNamed, routes } = useRouter();
 
 </script>
 
 <template>
   <div class="navegation-bar">
-    <div v-for="{ name } in routes" @click="router.push({name})">
+    <div v-for="{ name } in routes" @click="goToNamed(name)">
       <div class="flex flex-col gap-1">
         <inline-svg :src="`icons/${name}.svg`" />
         <div v-text="name" class="leading-none text-center font-bold"/>
@@ -30,7 +28,7 @@
   svg {
     @apply
       aspect-square h-8
-      fill-black
+      fill-gray-800
       dark:fill-white
   }
 </style>
