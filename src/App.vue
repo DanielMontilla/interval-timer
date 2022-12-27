@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { onMounted } from 'vue';
+  import { onMounted, ref } from 'vue';
   import { useTheme, useRouter, useState } from '@/services/_index';
   import { Navigation } from '@/components/_index'
 
@@ -16,7 +16,7 @@
 
 <template>
   <main>
-    <div 
+    <div
       class="absolute top-0 right-0 text-2xl z-20 h-8 aspect-square"
       v-text="theme == 'light' ? `🌑` : `🌕`"
       @click="toggleTheme"
@@ -37,7 +37,7 @@
 <style scoped>
   main {
     @apply 
-      w-screen h-screen select-none overflow-hidden
+      w-screen h-screen select-none overflow-hidden relative
       grid place-content-center
       transition-colors
       bg-void-light text-text-light
@@ -46,11 +46,12 @@
 
   .screen {
     @apply 
-      max-w-2xl w-screen
+      max-w-[640px] w-screen
       overflow-x-auto scrollbar-hide
       transition-colors
-      bg-background-light md:drop-shadow-[0_28px_28px_rgba(0,0,0,0.4)]
-      dark:bg-background-dark md:dark:drop-shadow-[0_18px_18px_rgba(128,128,128,0.1)]
+      bg-background-light
+      dark:bg-background-dark
+      sm:my-5 sm:rounded-xl
   }
 
   .page {

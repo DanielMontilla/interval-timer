@@ -1,43 +1,49 @@
 import { useRouter, useStorage } from "@/services/_index";
-import { Workout } from "@/types";
+import { Workout, Workouts } from "@/types";
 import { defineOptions } from "@/util";
+import { v4 as genId } from 'uuid';
 import { computed, ref, watch } from "vue";
 
-const useState = () => ({ init, workouts, workout, addWorkout, selectWorkout });
+const useState = () => ({ init, workouts, workout, addWorkout, selectWorkout, workoutsExists, removeWorkout });
 
-const _workouts = ref<Workout[]>([]);
-const _workoutIndex = ref<number>(0);
+const _workouts = ref<Workouts>({});
+const _id = ref<string>('dc68a164-13d3-4ab3-adda-239dc3bd6473');
 let _hasInit = false;
 
 const workouts = computed(() => _workouts.value);
 
 watch(_workouts, n => {
    if (!_hasInit) return;
-   const { uploadWorkouts } = useStorage();
-   uploadWorkouts(n);
+   const { saveWorkouts } = useStorage();
+   saveWorkouts(n);
 }, { immediate: false, deep: true });
 
-const selectWorkout = (i: number): boolean => {
-   if (i < 0 || i >= workouts.value.length) return false;
-   _workoutIndex.value = i;
+const selectWorkout = (id: string): boolean => {
+   _id.value = id;
    return true;
 }
 
-const workout = computed(() => {
-   if (_workoutIndex.value == null) return null;
-   return _workouts.value[_workoutIndex.value];
+const workout = computed<Workout | undefined>(() => {
+   return _workouts.value[_id.value];
 })
+
+const workoutsExists = computed(() => Object.keys(_workouts.value).length > 0)
 
 const addWorkout = (workout: Workout, options?: { select?: boolean, redirect?: boolean }) => {
    const { select, redirect } = defineOptions(options, { select: true, redirect: true });
 
-   const i = _workouts.value.push(workout) - 1;
+   const id = genId();
+   _workouts.value[id] = workout;
 
-   if (select) selectWorkout(i);
+   if (select) selectWorkout(id);
    if (select && redirect) {
       const { goToNamed } = useRouter();
       goToNamed('workout')
    }
+}
+
+const removeWorkout = (id: string) => {
+   delete _workouts.value[id]
 }
 
 const init = () => {

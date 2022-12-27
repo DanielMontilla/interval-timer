@@ -5,6 +5,7 @@
   import { lessThan, lessThanNumeric, moreThanNumeric, notEmpty, isNumber, getDefExercise, isInt, ACTIONS, isInputEl, waitMs } from '@/util';
   import { ComponentPublicInstance, onBeforeUpdate, ref } from 'vue';
   import { vOnClickOutside } from '@vueuse/components';
+  import { workoutNameMax, exerciseNameMax } from '@/validation';
 
   const name = ref<InputData<string>>({});
   const reps = ref<InputData<number>>({});
@@ -98,11 +99,19 @@
     
     await waitMs(100);
     saving.value = false;
+
+    const convert = (n: number | undefined) => {
+      if (n === undefined) throw new Error(`what...?`);
+      let r = n;
+      if (typeof r === 'string') r = Number.parseInt(r);
+      return r;
+    }
+
     addWorkout({
       name: name.value.content as string,
-      reps: reps.value.content as number,
+      reps: convert(reps.value.content),
       exercises: exercises.value.map(
-        ({ exercise: { name, duration } }) => ({name: name.content as string, duration: duration.content as number})
+        ({ exercise: { name, duration } }) => ({name: name.content as string, duration: convert(duration.content)})
       )
     }, { select: true, redirect: true })
       
@@ -125,17 +134,17 @@
     
   }
 
-  // NOTE: every time the dom is updated, the `:ref="..."` are ran again! this is super inefficient bc it runs on every input
+  // NOTE: every time the dom is updated, the `:ref="..."` run again! this is super inefficient bc it runs on every input
   onBeforeUpdate(() => _inputeEls = []);
 </script>
 
 <template>
-  <div class="create-page p-2">
+  <div class="create-page sm:p-4 p-2">
     <Input :ref="_addInputEl"
       class="text-3xl"
       v-model:data="name" 
       label="workout name" 
-      :validators="[notEmpty, lessThan(50)]"
+      :validators="[notEmpty, lessThan(workoutNameMax)]"
     />
     <Input :ref="_addInputEl"
       class="text-3xl"
@@ -151,7 +160,7 @@
         class="text-xl"
         v-model:data="exercise.name"
         label="exercise name"
-        :validators="[notEmpty, lessThan(24)]"
+        :validators="[notEmpty, lessThan(exerciseNameMax)]"
       />
       <Input :ref="_addInputEl"
         class="text-xl"
@@ -166,7 +175,7 @@
       </div>
     </div>
     <div class="w-full border-b-2 border-black/10 dark:border-white/10 mb-4"/> <!-- separator! -->
-    <div class="flex w-full justify-evenly">
+    <div class="flex w-full justify-evenly mb-16">
       <Button class="btn save-btn"
         :on-click="submit"
         :clickable="!saving"

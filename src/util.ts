@@ -51,6 +51,19 @@ export const clamp = (n: number, {min, max} = { min: 0, max: 1 }) => {
   return n;
 }
 
+type IsWithInOptions = { inclusive: boolean, min: number, max: number}
+export const isWithIn = (n: number, options?: Partial<IsWithInOptions>): boolean => {
+  const { inclusive, min, max } = defineOptions(options, {
+    inclusive: true,
+    min: 0,
+    max: 1
+  })
+
+  return inclusive
+    ? n >= min && n <= max
+    : n > min && n < max
+}
+
 export const wait = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 export const waitMs = wait;
 export const waitS = (secs: number) => wait(secs * 1000);
@@ -84,3 +97,5 @@ export const waitS = (secs: number) => wait(secs * 1000);
 
   return res;
 }
+
+/* Validation stuff */

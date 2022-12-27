@@ -1,43 +1,43 @@
-import { Exercise, Workout } from "@/types";
+import { Exercise, Workout, Workouts } from "@/types";
+import { parseWorkouts } from "@/validation";
 
-const useStorage = () => ({ fetchWorkouts, uploadWorkouts, uploadWorkout, reset });
-
+const useStorage = () => ({ saveWorkouts, fetchWorkouts });
 const WORKOUTS_KEY = 'workouts' as const;
-const { stringify, parse } = JSON;
 
-const _storage = localStorage; // can't destructure localStore due to 'invalid invocation'
-const _getItem = (key: string) => _storage.getItem(key);
-const _setItem = (key: string, value: string) => _storage.setItem(key, value);
-const _clear = () => _storage.clear();
-const _isWorkouts = (obj: any): obj is Workout[] => obj; // this is pretty fickle. on real app should use a more robust parser
-
-const reset = (): Workout[] => {
-   let _: Workout[] = [];
-   _clear();
-   uploadWorkouts(_);
-   return _;
+const saveWorkouts = (workouts: Workouts) => {
+  const result = parseWorkouts(workouts);
+  if (!result.success) {
+    // if workouts is incorrect
+    console.error(`something went wrong saving!`);
+    result.error.errors.forEach(({ message }) => console.error(message));
+    return;
+  }
+  const { data } = result;
+  localStorage.setItem(WORKOUTS_KEY, JSON.stringify(data));
 }
+const initWorkouts = () => saveWorkouts({});
+const resetWorkouts = initWorkouts;
 
-const fetchWorkouts = (): Workout[] => {
-   let value = _getItem(WORKOUTS_KEY);
-   let myWorkouts: Workout[];
-   if (!value) {
-      myWorkouts = reset();
-   } else {
-      let o: any;
-      try { o = parse(value) } catch { o = null }; // incase the string is formated incorrectly
-      myWorkouts = _isWorkouts(o) ? o : reset();
-   }
-   return myWorkouts;
-}
+const fetchWorkouts = (): Workouts => {
+  let content = localStorage.getItem(WORKOUTS_KEY);
 
-const uploadWorkouts = (workouts: Workout[]) => _setItem(WORKOUTS_KEY, stringify(workouts));
+  if (!content) {
+    // If no workotus are saved!
+    initWorkouts();
+    return fetchWorkouts();
+  };
 
-const uploadWorkout = (workout: Workout) => {
-   console.log('updated');
-   let workouts = fetchWorkouts();
-   workouts.push(workout);
-   uploadWorkouts(workouts);
+  const rawData = JSON.parse(content);
+  const result = parseWorkouts(rawData);
+
+  if (!result.success) {
+    // if data is corrupted (incorrect/failed validation)
+    console.error(`corrupted workouts, clearing...`);
+    resetWorkouts()
+    return fetchWorkouts();
+  }
+
+  return result.data;
 }
 
 export default useStorage;

@@ -1,7 +1,8 @@
 import { useRouter as useR, createRouter, createWebHashHistory } from 'vue-router'
 import * as Pages from '@/pages/_index';
+import { computed } from 'vue';
 
-const useRouter = () => ({ goToPath, goToNamed, routes });
+const useRouter = () => ({ goToPath, goToNamed, routes, currentRoute });
 
 const routes = [
   { path: '/',        component: Pages.Home,    name: 'home' },
@@ -15,8 +16,8 @@ const Router = createRouter({
   routes,
 });
 
+const currentRoute = computed(() => Router.currentRoute.value.name);
 const goToPath = (path: string) => Router.push({ path });
 const goToNamed = (name: string) => Router.push({ name })
-
 
 export { useRouter, Router } ;

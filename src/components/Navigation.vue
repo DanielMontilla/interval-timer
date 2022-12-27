@@ -1,16 +1,18 @@
 <script setup lang="ts">
   import { useRouter } from '@/services/_index'
-  const { goToNamed, routes } = useRouter();
+  import { watch } from 'vue';
+  const { goToNamed, routes, currentRoute } = useRouter();
 
 </script>
 
 <template>
   <div class="navegation-bar">
-    <div v-for="{ name } in routes" @click="goToNamed(name)">
-      <div class="flex flex-col gap-1">
-        <inline-svg :src="`icons/${name}.svg`" />
-        <div v-text="name" class="leading-none text-center font-bold"/>
-      </div>
+    <div v-for="{ name } in routes" @click="goToNamed(name)"
+      class="flex flex-col h-full justify-evenly"
+      :class="{'text-accent underline decoration-2': currentRoute === name}"
+    >
+      <inline-svg :src="`icons/${name}.svg`" class="mb-1" />
+      <div v-text="name" class="leading-none text-center font-bold text-text-light dark:text-text-dark"/>
     </div>
   </div>
 </template>
@@ -18,17 +20,18 @@
 <style scoped>
   .navegation-bar {
     @apply
-      sticky w-full bottom-0 backdrop-blur-sm backdrop-opacity-75 h-16 pt-1 z-10
-      flex justify-around items-center
+      absolute w-full bottom-0 backdrop-blur-sm backdrop-opacity-75 h-16 pt-1 z-10
+      grid grid-cols-4 content-center
       transition-colors duration-75
-      bg-white/30
-      dark:bg-black/20
+      bg-highlight-light
+      dark:bg-highlight-dark
+      sm:bottom-5 sm:rounded-b-xl
+      max-w-[640px]
   }
 
   svg {
     @apply
       aspect-square h-8
-      fill-gray-800
-      dark:fill-white
+      transition-[fill] duration-75
   }
 </style>

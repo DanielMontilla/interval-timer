@@ -27,6 +27,8 @@ export interface Workout {
   exercises: Exercise[];
 };
 
+export type Workouts = Record<string, Workout>;
+
 export type InputEl = InstanceType<typeof Input>
 export type InputElRef = Ref<InputEl>
 
