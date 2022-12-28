@@ -1,48 +1,13 @@
-import { Exercise, InputEl, InputElRef, InputExercise, InputValidator } from "@/types";
+import { Exercise, ExerciseData, InputData, InputState } from "@/types";
 import { VNodeRef } from "vue";
+import { ZodSchema } from "zod";
 
-/* validators! */
-export const notEmpty: InputValidator = (n: string) => ({
-  isValid: n.trim().length > 0,
-  msg: `can't be empty`
-})
-
-export const lessThan = (i: number, withWhiteSpace = false): InputValidator => (n: string) => ({
-  isValid: withWhiteSpace ? n.length < i : n.trim().length < i,
-  msg: `must be less than ${i} characters`
-})
-
-export const moreThan = (i: number, withWhiteSpace = false): InputValidator => (n: string) => ({
-  isValid: withWhiteSpace ? n.length > i : n.trim().length > i,
-  msg: `must be more than ${i} characters`
-})
-
-export const moreThanNumeric = (i: number): InputValidator => (n: string) => ({
-  isValid: Number(n) > i,
-  msg: `must be more than ${i}`
-})
-
-export const lessThanNumeric = (i: number): InputValidator => (n: string) => ({
-  isValid: Number(n) < i,
-  msg: `must be less than ${i}`
-})
-
-export const isInt: InputValidator = (n: string) => ({
-  isValid: Number.isInteger(Number(n)),
-  msg: `must be integer`
-})
-
-// TODO: FIX
-export const isNumber: InputValidator = (n: string) => ({
-  isValid: !Number.isNaN(Number(n)),
-  msg: `must be a number`
-})
 
 /* shared contants */
-export const ACTIONS = ['add', 'copy', 'moveup', 'movedown', 'delete'] as const;
-export const getDefExercise = (): InputExercise => ({ name: {}, duration: {} });
+export const ACTIONS_ARRAY = ['add', 'copy', 'moveup', 'movedown', 'delete'] as const;
+export const DEF_INPUT_DATA: InputData = { state: 'empty', content: '' };
+export const DEF_EXERCISE_DATA: ExerciseData = { name: DEF_INPUT_DATA, duration: DEF_INPUT_DATA };
 
-export const isInputEl = (el: any): el is InputEl => el.validate != undefined;
 
 /* actual util */
 export const clamp = (n: number, {min, max} = { min: 0, max: 1 }) => {
@@ -99,3 +64,21 @@ export const waitS = (secs: number) => wait(secs * 1000);
 }
 
 /* Validation stuff */
+export const validateInputData = (content: string, schema: ZodSchema, isNumber: boolean = false): InputData => {
+  
+  const refinedContent = isNumber ? Number.parseFloat(content) : content.trim();
+  let state: InputState = 'empty'
+  let msg: string | undefined = undefined;
+
+  let result = schema.safeParse(refinedContent);
+
+  if (!result.success) {
+    state = 'invalid';
+    msg = result.error.issues[0].message;
+  } else {
+    state = 'valid';
+    msg = undefined;
+  }
+
+  return { content, state, msg }
+}

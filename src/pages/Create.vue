@@ -1,257 +1,197 @@
 <script setup lang="ts">
-  import { Input, Button } from '@/components/_index';
-  import { useState } from '@/services/_index';
-  import { InputData, Action, InputEl, InputExercise } from '@/types';
-  import { lessThan, lessThanNumeric, moreThanNumeric, notEmpty, isNumber, getDefExercise, isInt, ACTIONS, isInputEl, waitMs } from '@/util';
-  import { ComponentPublicInstance, onBeforeUpdate, ref } from 'vue';
-  import { vOnClickOutside } from '@vueuse/components';
-  import { workoutNameMax, exerciseNameMax } from '@/validation';
+  import { Input } from '@/components/_index'
+  import { InputData, ExerciseData, Action } from '@/types';
+  import { exerciseNameSchema, workoutNameSchema, repsSchema, durationSchema } from '@/validation';
+  import { DEF_INPUT_DATA, DEF_EXERCISE_DATA, ACTIONS_ARRAY, validateInputData } from '@/util'
+  import { ref, computed } from 'vue';
+  import { v4 as genId } from 'uuid';
+import { INVALID } from 'zod';
 
-  const name = ref<InputData<string>>({});
-  const reps = ref<InputData<number>>({});
+  const workoutName = ref<InputData>(DEF_INPUT_DATA);
+  const reps = ref<InputData>(DEF_INPUT_DATA);
+  const exercises = ref<{id: string, data: ExerciseData}[]>([{ id: genId(), data: {...DEF_EXERCISE_DATA}}]);
 
-  let _next = 0; // must have unique id for each exercise to mantain state between input components
-  const exercises = ref<{id: number, exercise: InputExercise}[]>([{id: _next++, exercise: getDefExercise()}]);
+  const onSubmit = () => {
+    let result = true;
+    const invalidate = () => result ? result = false : null;
 
-  let _inputeEls: InputEl[] = [];
-  let _addInputEl = (el: Element | null | ComponentPublicInstance) => {
-    if (el == null) return;
-    isInputEl(el) ? _inputeEls.push(el) : null;
-  }
-
-  const add = (at: number, exercise: InputExercise = getDefExercise()) => exercises.value.splice(at, 0, { id: _next++, exercise: exercise });
-
-  const swap = async (i1: number, i2: number) => {
-    const len = exercises.value.length - 1;
-    
-    // validating inputs:
-    if (i1 < 0 || i2 < 0) return;
-    if (i1 > len || i2 > len) return;
-    if ( i1 == i2) return;
-    
-    const e1 = exercises.value[i1];
-    const e2 = exercises.value[i2];
-    
-    exercises.value[i1] = e2;
-  
-    exercises.value[i2] = e1;
-  }
-  
-  const remove = (position: number) => {
-    const len = exercises.value.length - 1;
-    
-    // validating inputs:
-    if (position > len || position < 0) return;
-    if (len == 0) return;
-    
-    exercises.value.splice(position, 1);
-  }
-  
-  const copy = (position: number) => {
-    const len = exercises.value.length - 1;
-    
-    // validating inputs:
-    if (position > len || position < 0) return;
-
-    let eCopy: InputExercise = Object.create(exercises.value[position].exercise);
-
-    add(position, eCopy);
-  }
-
-  const handleAction = (action: Action, position: number) => {
-    switch (action) {
-      case 'add':
-        add(position + 1);
-        break;
-      case 'moveup':
-        swap(position, position - 1);
-        break;
-      case 'movedown':
-        swap(position, position + 1);
-        break;
-      case 'copy':
-        copy(position);
-        break;
-      case 'delete':
-        remove(position);
-        break;
+    if (workoutName.value.state !== 'valid') {
+      invalidate();
+      workoutName.value = validateInputData(
+        workoutName.value.content,
+        workoutNameSchema,
+      );
     }
-  }
-  
-  const saving = ref<boolean>(false);
-  const submit = async () => {
     
-    let canSubmit = true;
-    _inputeEls.forEach(i => {
-      if (i.state != 'valid') {
-        canSubmit = false;
-        i.validate();
+    if (reps.value.state !== 'valid') {      
+      invalidate();
+      reps.value = validateInputData(
+        reps.value.content,
+        repsSchema,
+      );
+    }
+    
+    for (let i = 0; i < exercises.value.length; i++) {
+      const { data: { duration, name } } = exercises.value[i];
+      if (name.state !== 'valid') {
+        invalidate();
+        exercises.value[i].data.name = validateInputData(
+          name.content,
+          exerciseNameSchema
+        )
       }
-    });
-    
-    if (!canSubmit) {
-      // TODO: animations
-      return false;
-    }
-    
-    saving.value = true;
-    const { addWorkout } = useState();
-    
-    await waitMs(100);
-    saving.value = false;
-
-    const convert = (n: number | undefined) => {
-      if (n === undefined) throw new Error(`what...?`);
-      let r = n;
-      if (typeof r === 'string') r = Number.parseInt(r);
-      return r;
+      if (duration.state !== 'valid') {
+        invalidate();
+        exercises.value[i].data.duration = validateInputData(
+          duration.content,
+          durationSchema
+        )
+      }
     }
 
-    addWorkout({
-      name: name.value.content as string,
-      reps: convert(reps.value.content),
-      exercises: exercises.value.map(
-        ({ exercise: { name, duration } }) => ({name: name.content as string, duration: convert(duration.content)})
-      )
-    }, { select: true, redirect: true })
-      
-    return true;
+    return result;
+  }
+  const addExercise = (
+    at: number = exercises.value.length,
+    data = DEF_EXERCISE_DATA,
+    id: string = genId()
+  ) => exercises.value.splice(at + 1, 0, { id, data: { ...data } });
+
+  const copyExercise = (
+    at: number
+  ) => addExercise(at, exercises.value[at].data);
+
+  const deleteExercise = (
+    at: number
+  ) => exercises.value.splice(at, 1);
+
+  const moveExercise = (
+    direction: 'up' | 'down'
+  ) => (
+    at: number
+  ) => {
+    const { data, id } = deleteExercise(at)[0];
+    const pivot = direction === 'down' ? at : at - 2;
+    addExercise(pivot, data, id);
   }
 
-
-  const allowedClear = ref(false);
-  const disallow = () => allowedClear.value = false;
-  const clear = () => {
-    if (!allowedClear.value) {
-      allowedClear.value = true;
-      return;
-    }
-    allowedClear.value = false;
-    _inputeEls.forEach(i => i.clear());
-  };
-
-  const reset = () => {
-    
+  const handleAction: Record<Action, (at: number) => void> = {
+    add: addExercise,
+    copy: copyExercise,
+    delete: deleteExercise,
+    movedown: moveExercise('down'),
+    moveup: moveExercise('up')
   }
 
-  // NOTE: every time the dom is updated, the `:ref="..."` run again! this is super inefficient bc it runs on every input
-  onBeforeUpdate(() => _inputeEls = []);
+  const canPerformAction: Record<Action, (at: number) => boolean> = {
+    add: (at) => at < exercises.value.length - 1,
+    copy: (at) => exercises.value[at].data.name.content !== '' || exercises.value[at].data.duration.content !== '',
+    delete: () => exercises.value.length > 1,
+    movedown: (at) => at + 1 < exercises.value.length,
+    moveup: (at) => at - 1 >= 0
+  }
+
 </script>
 
 <template>
-  <div class="create-page sm:p-4 p-2">
-    <Input :ref="_addInputEl"
-      class="text-3xl"
-      v-model:data="name" 
-      label="workout name" 
-      :validators="[notEmpty, lessThan(workoutNameMax)]"
-    />
-    <Input :ref="_addInputEl"
-      class="text-3xl"
-      v-model:data="reps" 
-      label="reps" 
-      :validators="[isNumber, moreThanNumeric(0), lessThanNumeric(1001), isInt]"
-    />
-
-    <div class="w-full border-b-2 border-black/10 dark:border-white/10 mb-4"/> <!-- separator! -->
-
-    <div v-for="({id, exercise}, i) in exercises" class="exercise-card" :key="id">
-      <Input :ref="_addInputEl"
-        class="text-xl"
-        v-model:data="exercise.name"
-        label="exercise name"
-        :validators="[notEmpty, lessThan(exerciseNameMax)]"
+  <div class="flex flex-col p-2 sm:p-4">
+    <!-- General Workout info -->
+    <Input
+      label="Workout Name"
+      labelClass="text-3xl"
+      inputClass="text-xl"
+      :schema="workoutNameSchema"
+      v-model:data="workoutName"
       />
-      <Input :ref="_addInputEl"
-        class="text-xl"
-        v-model:data="exercise.duration"
-        label="duration"
-        :validators="[isNumber, moreThanNumeric(0), lessThanNumeric(3600 + 1), isInt]"
-      />
-      <div class="actions">
-        <div v-for="action in ACTIONS" class="action-btn" @click="handleAction(action, i)">
-          <inline-svg :src="`icons/${action}.svg`" />
+      <Input
+      label="Reps"
+      class="mt-3 mb-1"
+      labelClass="text-3xl"
+      inputClass="text-xl"
+      :schema="repsSchema" isNumber
+      v-model:data="reps"
+    />
+    <!-- Exercises -->
+    <TransitionGroup name="exercise-list">
+      <div v-for="{ id, data: { name, duration } }, i in exercises" :key="id" class="mt-7">
+        <div
+          class="exercise-el space-y-2 p-2 pt-4 outline-2 outline-dashed rounded-md outline-opacity-50 relative dark:bg-background-dark bg-background-light"
+          :class="`${
+            name.state === 'invalid' || duration.state === 'invalid'
+              ? `outline-red-800`
+              : `outline-neutral`
+          }`"
+        >
+          <!-- exercise label and actions! -->
+          <div class="grid grid-cols-2 place-items-center absolute w-full inset-0 h-10 -translate-y-5">
+            <span v-text="`Exercise #${i + 1}`" 
+              class="px-1 col-start-1 col-end-1 justify-self-start leading-none ml-2 sm:text-3xl text-2xl dark:bg-background-dark bg-background-light font-bold"
+            />
+            <div 
+              class="col-start-2 col-end-2 justify-self-end flex flex-row items-center justify-center sm:mr-4 sm:pr-1 mr-2 dark:bg-background-dark bg-background-light"
+            >
+            <div v-for="action in ACTIONS_ARRAY" :key="action"
+              class="dark:bg-highlight-dark bg-highlight-light p-1 ml-1 rounded-md"
+              v-show="canPerformAction[action](i)"
+              @click="handleAction[action](i)"
+            >
+              <inline-svg :src="`icons/${action}.svg`" class="h-7 w-7 sm:h-8 sm:w-8"/>
+            </div>
+            </div>
+          </div>
+  
+          <!-- inputs! -->
+          <Input
+            :label="`Name`"
+            labelClass="sm:text-xl text-base"
+            :schema="exerciseNameSchema"
+            v-model:data="exercises[i].data.name"
+            />
+            <Input
+            label="Duration"
+            labelClass="sm:text-xl text-base"
+            :schema="durationSchema" isNumber
+            v-model:data="exercises[i].data.duration"
+          />
         </div>
       </div>
+    </TransitionGroup>
+    <!-- add execirse to end! -->
+    <div 
+      @click="addExercise()"
+      class="py-2 mb-4 outline-2 outline outline-neutral/80 w-full grid place-items-center mt-4 rounded-md dark:bg-highlight-dark bg-highlight-light bg-opacity-50"
+    >
+      <inline-svg src="icons/add.svg" class="h-10 dark:text-neutral text-text-light"/>
     </div>
-    <div class="w-full border-b-2 border-black/10 dark:border-white/10 mb-4"/> <!-- separator! -->
-    <div class="flex w-full justify-evenly mb-16">
-      <Button class="btn save-btn"
-        :on-click="submit"
-        :clickable="!saving"
-      >
-        <inline-svg class="save-load-icon" v-if="saving" src="icons/spinner.svg"/>
-        <div v-else v-text="`save`"/>
-      </Button>
-      <Button class="btn clear-btn" 
-        :on-click="clear" 
-        v-on-click-outside="disallow"
-      >
-        <Transition mode="out-in">
-          <div v-if="allowedClear" v-text="`sure?`"/>
-          <div v-else v-text="`clear`"/>
-        </Transition>
-      </Button>
+    <div class="grid place-items-center w-full">
+      <div @click="onSubmit"
+        class="h-14 w-32 leading-none bg-accent text-white text-2xl rounded-md font-bold grid place-items-center"
+        v-text="`create`"
+      />
     </div>
+    <div class="mb-16"/>
   </div>
 </template>
-
 <style scoped>
-  .create-page .input-continer + .input-continer {
-    @apply
-      mt-2
-  }
-  .actions {
-    @apply
-      flex justify-end mb-5
+  .exercise-el {
+    transition: outline-color 0.15s linear;
   }
 
-  .actions > .action-btn + .action-btn {
-    @apply
-      ml-3
+  .exercise-list-move,
+  .exercise-list-enter-active,
+  .exercise-list-leave-active {
+    transition: transform 0.25s ease-in, opacity 0.25s linear;
   }
-
-  .action-btn {
-    @apply
-      grid place-content-center w-10 h-10 aspect-square p-1 rounded-md
-      bg-white/10
-  }
-
-  svg {
-    @apply
-    h-full w-full aspect-square
-  }
-
-  .btn {
-    @apply
-      text-3xl font-bold py-4 pt-3 px-5 rounded-md leading-none w-[112px] max-h-[54px]
-      text-white flex content-center items-center justify-center place-content-center
-  }
-
-  .save-load-icon {
-    @apply
-      text-white aspect-square h-12 w-12 animate-spin mt-1;
-  }
-
-  .save-btn {
-    @apply
-      bg-green-700
-      dark:bg-green-600
-  }
-  .clear-btn {
-    @apply
-      bg-rose-800
-      dark:bg-rose-700
-  }
-
-  .v-enter-active,
-  .v-leave-active {
-    transition: opacity 0.05s ease;
-  }
-
-  .v-enter-from,
-  .v-leave-to {
+  .exercise-list-enter-from{
     opacity: 0;
+    transform: translateX(256px);
   }
-
+  .exercise-list-leave-to {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  .exercise-list-leave-active {
+    width: 100%;
+    position: absolute;
+  }
 </style>
