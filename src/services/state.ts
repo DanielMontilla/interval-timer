@@ -4,13 +4,46 @@ import { defineOptions } from "@/util";
 import { v4 as genId } from 'uuid';
 import { computed, ref, watch } from "vue";
 
-const useState = () => ({ init, workouts, workout, addWorkout, selectWorkout, workoutsExists, removeWorkout });
+const useState = () => ({ init, workouts, workout, addWorkout, selectWorkout, workoutsExists, removeWorkout, editWorkout, editing, stopEditing, selectEditWorkout });
 
 const _workouts = ref<Workouts>({});
 const _id = ref<string>('dc68a164-13d3-4ab3-adda-239dc3bd6473');
+const _editingId = ref<string>('');
 let _hasInit = false;
 
 const workouts = computed(() => _workouts.value);
+const editing = ref<{
+   workout: Workout,
+   id: string
+}>();
+
+const selectEditWorkout = (id: string) => {
+   _editingId.value = id;
+
+   if (!_workouts.value[id]) return;
+   if (id == _id.value) selectWorkout('');
+
+   const { goToNamed } = useRouter();
+   goToNamed('create');
+}
+
+const stopEditing = () => selectEditWorkout('');
+
+const editWorkout = (id: string, workout: Workout, finish = true) => {
+   if (!_workouts.value[id]) return;
+   _workouts.value[id] = workout;
+   if (finish) {
+      stopEditing();
+      selectWorkout(id);
+   };
+}
+
+watch(_editingId, (n, o) => {
+   if (n === o) return;
+   !_workouts.value[n] 
+      ? editing.value = undefined
+      : editing.value = { workout: _workouts.value[n], id: n};
+})
 
 watch(_workouts, n => {
    if (!_hasInit) return;
@@ -43,6 +76,9 @@ const addWorkout = (workout: Workout, options?: { select?: boolean, redirect?: b
 }
 
 const removeWorkout = (id: string) => {
+   if (id === _editingId.value) {
+      selectEditWorkout('');
+   }
    delete _workouts.value[id]
 }
 

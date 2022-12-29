@@ -8,6 +8,7 @@ export const ACTIONS_ARRAY = ['add', 'copy', 'moveup', 'movedown', 'delete'] as 
 export const DEF_INPUT_DATA: InputData = { state: 'empty', content: '' };
 export const DEF_EXERCISE_DATA: ExerciseData = { name: DEF_INPUT_DATA, duration: DEF_INPUT_DATA };
 
+export const KEY_SFX_ARR = Array(3).map(i => `succ_click_${i}`);
 
 /* actual util */
 export const clamp = (n: number, {min, max} = { min: 0, max: 1 }) => {
@@ -16,7 +17,7 @@ export const clamp = (n: number, {min, max} = { min: 0, max: 1 }) => {
   return n;
 }
 
-type IsWithInOptions = { inclusive: boolean, min: number, max: number}
+type IsWithInOptions = { inclusive: boolean, min: number, max: number }
 export const isWithIn = (n: number, options?: Partial<IsWithInOptions>): boolean => {
   const { inclusive, min, max } = defineOptions(options, {
     inclusive: true,
@@ -82,3 +83,11 @@ export const validateInputData = (content: string, schema: ZodSchema, isNumber: 
 
   return { content, state, msg }
 }
+
+type Interval = { min: number, max: number }
+export const randFloat = (opts: Partial<Interval>) => {
+  const { min, max } = defineOptions(opts, { min: 0, max: 1 });
+  return Math.random() * (max - min) + min;
+}
+export const randInt = (opts: Partial<Interval>) => Math.round(randFloat(opts));
+export const randPick = <T>(arr: T[]): T => arr[ randInt({ min: 0, max: arr.length - 1 }) ];

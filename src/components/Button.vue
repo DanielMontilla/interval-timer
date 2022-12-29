@@ -1,35 +1,68 @@
 <script setup lang="ts">
   import { useSound } from '@/services/_index'
-  interface ButtonProps { onClick?: Function, sound?: string[] | null, disabled?: boolean, clickable?: boolean }
+import { randPick } from '@/util';
+
+  interface ButtonProps {
+    onClick?: Function, // invoked callback when clickable and not disabled!
+    sound?: { success?: string[], failed?: string[] } | null,
+    clickable?: boolean | (() => boolean),
+    disabled?: boolean,
+    disabledClass?: string,
+    activeClass?: string,
+    cooldown?: number | null
+  }
 
   const props = withDefaults(
     defineProps<ButtonProps>(), {
       onClick: () => () => undefined,
-      sound: () => ['click'],
+      sound: () => null,
       disabled: () => false,
       clickable: () => true,
+      disabledClass: () => `grayscale`,
+      activeClass: () => ``,
+      cooldown: () => null
     }
   );
 
+  let _onCooldown = false;
+
   const click = () => {
-    if (!props.clickable) return;
-    props.onClick();
-    if (!props.sound) return;
+    const { clickable, sound, onClick, cooldown } = props;
     const { play } = useSound();
-    // TODO: pick random sound from `sounds` prop
-    play(`sounds/${props.sound[0]}.mp3`);
+
+    if (_onCooldown) return;
+
+    if (cooldown !== null) {
+      _onCooldown = true;
+      setTimeout(() => _onCooldown = false, cooldown);
+    }
+
+    const canClick = typeof clickable === 'function' ? clickable() : clickable;
+
+    if (!canClick) {
+      if (sound && sound.failed && sound.failed.length > 0) {
+        play(`sounds/${randPick(sound.failed)}.mp3`)
+      }
+      return;
+    }
+
+    if (sound && sound.success && sound.success.length > 0) {
+      play(`sounds/${randPick(sound.success)}.mp3`)
+    }
+    onClick();
   }
 </script>
 
 <template>
-  <div class="button" :class="{ disabled: props.disabled }" @click="click">
+  <div @click="click" 
+    :class="[
+      `${ disabled ? disabledClass : activeClass }`,
+      {'pointer-events-none': disabled },
+    ]"
+  >
     <slot/>
   </div>
 </template>
 
 <style scoped>
-  .disabled {
-    @apply
-      grayscale;
-  }
 </style>

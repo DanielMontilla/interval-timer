@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { useState, useRouter } from '@/services/_index';
 
-  const { workouts, selectWorkout, removeWorkout, workoutsExists } = useState();
+  const { workouts, selectWorkout, removeWorkout, workoutsExists, selectEditWorkout } = useState();
   const { goToNamed } = useRouter();
 
   const select = (id: string) => {
@@ -19,6 +19,7 @@
       <span class="flex gap-2 items-center">
         <p v-text="workout.name" class="font-bold text-2xl leading-none"/>
         <div @click.stop="removeWorkout(id)" class="h-4 w-4 rounded-full bg-red-900"/>
+        <div @click.stop="selectEditWorkout(id)" class="h-4 w-4 rounded-full bg-orange-500"/>
       </span>
         <div class="text-lg mt-3">
           <div class="stat-box">

@@ -1,6 +1,5 @@
 <script setup lang="ts">
   import { useRouter } from '@/services/_index'
-  import { watch } from 'vue';
   const { goToNamed, routes, currentRoute } = useRouter();
 
 </script>
