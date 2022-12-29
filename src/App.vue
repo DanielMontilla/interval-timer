@@ -23,7 +23,7 @@
     />
     <router-view v-slot="{ Component }">
       <div class="screen">
-        <Transition name="fade">
+        <Transition name="fade" mode="out-in">
           <KeepAlive :max="0">
             <component :is="Component" class="page"/>
           </KeepAlive>
@@ -61,7 +61,7 @@
 
   .fade-enter-active,
   .fade-leave-active {
-    transition: opacity 0.25s ease-in-out;
+    transition: opacity 0.1s ease;
   }
   .fade-enter-from,
   .fade-leave-to {

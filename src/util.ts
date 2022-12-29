@@ -30,14 +30,20 @@ export const isWithIn = (n: number, options?: Partial<IsWithInOptions>): boolean
     : n > min && n < max
 }
 
+
+type MapToOptions = { from: Interval, to: Interval }
+export const mapTo = (value: number, options?: Partial<MapToOptions>) => {
+  const { from: { min: fmin, max: fmax }, to: { min: tmin, max: tmax } } = defineOptions(options, { 
+    from: { min: 0, max: 1 },
+    to: { min: 0, max: 2 }
+  })
+
+  return tmin + (((value - fmin)*(tmax - tmin)) / (fmax - fmin));
+}
+
 export const wait = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 export const waitMs = wait;
 export const waitS = (secs: number) => wait(secs * 1000);
-
-// TODO: copy from vue-idle
-// export const randPick = <T>(arr: T[]): T => {
-  
-// }
 
 /**
  * @description used to construct complete config objects from incomplete/missing config.
@@ -91,3 +97,32 @@ export const randFloat = (opts: Partial<Interval>) => {
 }
 export const randInt = (opts: Partial<Interval>) => Math.round(randFloat(opts));
 export const randPick = <T>(arr: T[]): T => arr[ randInt({ min: 0, max: arr.length - 1 }) ];
+
+export const divide = (divisor: number, dividend: number) => {
+  const quotient = divisor % dividend;
+  const remainder = dividend - divisor * quotient;
+  return { quotient, remainder };
+}
+export const toSignificant = (n: number, digits: number) => {
+  digits = Math.round(digits);
+  let res = `${n}`;
+  if (res.length < digits) res += Array(digits - res.length).fill(`0`).join();
+  return res.substring(0, digits);
+}
+const aSecond = 1000;
+const aMinute = aSecond * 60;
+const anHour = aMinute * 60;
+export const parseDuration = (ms: number) => {
+  const { quotient: hours, remainder: rHours } = divide(ms, anHour);
+  const { quotient: minutes, remainder: rMinutes } = divide(ms, rHours);
+  const { quotient: seconds, remainder: miliseconds } = divide(ms, rMinutes);
+  const hasHours = hours > 0;
+  const hasMinutes = minutes > 0 && hasHours;
+  const hasSeconds = seconds > 0 && hasMinutes;
+  return {
+    hours: hasHours ? toSignificant(hours, 2) : null,
+    minutes: hasMinutes ? toSignificant(minutes, 2) : null,
+    seconds: hasSeconds ? toSignificant(seconds, 2) : null,
+    miliseconds: toSignificant(miliseconds, 2)
+  }
+}

@@ -25,7 +25,7 @@
   .progress-wheel {
     @apply
       w-full max-w-md aspect-square relative z-10
-      inline-grid place-content-center
+      /* inline-grid place-content-center */
   }
   
   .progress-wheel::before {

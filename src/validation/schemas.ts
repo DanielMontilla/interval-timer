@@ -21,6 +21,7 @@ export const exerciseNameSchema = z.string({ invalid_type_error: `must be a stri
 const day = 60 * 60 * 24;
 export const durationSchema = z.number({invalid_type_error: `must be a number`})
   .positive({ message: `must be possitive`})
+  .min(1, { message: `must atleast a second` })
   .max(day, { message: `must be less than a day!`});
   
 export const exerciseSchema = z.object({

@@ -15,15 +15,11 @@ const _stop = () => {
    _raf = null;
 }
 
-
-const _loop = (time?: number) => {
-   if (!time) time = performance.now();
-
-   const dt = performance.now() - time;
-
+const _loop = (last = performance.now()) => {
+   const now = performance.now();
+   const dt = now - last;
    for (const [,callback] of _callbacks) callback(dt);
-
-   _raf = requestAnimationFrame(_loop);
+   _raf = requestAnimationFrame(() => _loop(now));
 }
 
 const add = (callback: LoopCallback): number => {
@@ -37,7 +33,7 @@ const add = (callback: LoopCallback): number => {
 }
 
 const remove = (id: number) => {
-   _callbacks.delete(id);
+   _callbacks.delete(id)
    if (_callbacks.size <= 0) _stop();
 }
 
