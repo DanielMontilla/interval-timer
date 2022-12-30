@@ -24,7 +24,7 @@
 <style scoped>
   .progress-wheel {
     @apply
-      w-full max-w-md aspect-square relative z-10
+      w-full max-w-lg aspect-square relative z-10
       /* inline-grid place-content-center */
   }
   

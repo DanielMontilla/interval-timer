@@ -33,6 +33,8 @@ import { validateInputData } from '@/util';
       </transition>
     </div>
     <input
+      autocomplete="false"
+      spellcheck="false"
       :type="isNumber ? 'number' : 'string'"
       :value="data.content"
       @input="udpate"

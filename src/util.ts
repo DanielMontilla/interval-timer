@@ -105,12 +105,6 @@ export const modDiv = (dividend: number, divisor: number) => {
   const quotient = Math.floor(dividend / divisor);
   return { quotient, remainder };
 }
-export const toSignificant = (n: number, digits: number) => {
-  digits = Math.round(digits);
-  let res = `${n}`;
-  if (res.length < digits) res += Array(digits - res.length).fill(`0`).join();
-  return res.substring(0, digits);
-}
 const aSecond = 1000;
 const aMinute = aSecond * 60;
 const anHour = aMinute * 60;
@@ -129,11 +123,21 @@ export const parseMiliseconds = (ms: number) => {
   const miliseconds = remainder;
   return { hours, minutes, seconds, miliseconds }
 }
-
 const twoDigits = (n: number) => {
   let res = `${n}`;
   if (res.length < 2) res = `0` + res;
-  return res;
+  return res.substring(0, 2);
+}
+export const formatProgDuration = (ms: number) => {
+  let remainder = Math.floor(ms);
+  const seconds = Math.floor(remainder / aSecond);
+  remainder %= aSecond;
+  const miliseconds = remainder;
+
+  return {
+    seconds,
+    miliseconds: twoDigits(miliseconds)
+  };
 }
 export const formatDuration = (duration: number) => {
   const { hours, minutes, seconds, miliseconds } = parseMiliseconds(duration * 1000);

@@ -4,5 +4,6 @@ import useTheme from "@/services/theme";
 import useStorage from '@/services/storage';
 import useLoop from '@/services/loop';
 import useSound from '@/services/sound';
+import useTTS from '@/services/tts';
 
-export { useSound, useState, useTheme, useRouter, Router, useStorage, useLoop};
+export { useSound, useState, useTheme, useRouter, Router, useStorage, useLoop, useTTS };

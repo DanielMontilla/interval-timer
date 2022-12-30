@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import { Duration } from '@/types';
   import { formatDuration } from '@/util';
   import { computed, onUpdated } from 'vue';
 
@@ -9,9 +8,6 @@
 
   const props = defineProps<ExerciseDurationProps>();
   const duration = computed(() => formatDuration(props.duration));
-  onUpdated(() => {
-    console.log('hi')
-  })
 </script>
 <template>
   <div class="flex flex-row space-x-2">

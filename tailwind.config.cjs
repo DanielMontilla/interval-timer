@@ -26,6 +26,9 @@ module.exports = {
           dark: 'hsl(0, 0%, 6%)',
           light: 'hsl(0, 0%, 25%)'
         }
+      },
+      screens: {
+        xm: '420px'
       }
     },
   },

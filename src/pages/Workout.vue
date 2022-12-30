@@ -1,39 +1,73 @@
 <script setup lang="ts">
-  import { useState, useLoop, useRouter } from '@/services/_index';
-  import { Button, ProgressWheel, ExerciseDuration } from '@/components/_index';
-  import { isWithIn, mapTo, BUTTON_SFX_ARRAY, formatDuration } from '@/util';
+  import { useState, useLoop, useRouter, useTTS } from '@/services/_index';
+  import { Button, ProgressWheel, ExerciseDuration, ProgressDuration } from '@/components/_index';
+  import { isWithIn, mapTo, BUTTON_SFX_ARRAY, formatDuration, wait } from '@/util';
   import { watch, computed, onDeactivated, onMounted, onUnmounted, ref, nextTick, reactive } from 'vue';
-  import { Workout } from '@/types';
+  import { Exercise } from '@/types';
 
   const { workout, workoutsExists } = useState();
+  const { say } = useTTS();
   const { goToNamed } = useRouter();
+  const sayExe = ({ name, duration }: Exercise) => say(`${name} for ${duration} second${duration === 1 ? '' : 's'}`);
+
+  const exeListEl = ref<HTMLDivElement>();
+  const repListEl = ref<HTMLDivElement>();
 
   type Index = { rep: number, exe: number };
   const index = reactive<Index>({ rep: 0, exe: 0 });
   const setIndex = ({ rep, exe }: Index) => {
     if (!workout.value) return;
-    let moved = false;
 
+    let repMoved = false;
+    let exeMoved = false;
+    
     if (
       isWithIn(rep, { min: 0, max: workout.value.reps - 1 })
       && index.rep !== rep
-    ) { index.rep = rep; moved = true };
-
+      ) { index.rep = rep; repMoved = true };
+      
     if (
       isWithIn(exe, { min: 0, max: workout.value.exercises.length - 1 })
       && index.exe !== exe
-    ) { index.exe = exe; moved = true };
-
-    if (moved) resetProgress();
+      ) { index.exe = exe; exeMoved = true };
+        
+    let moved = repMoved || exeMoved;
+    if (moved) {
+      if (running.value && exercise.value) sayExe(exercise.value);
+      resetProgress();
+      scroll(repMoved, exeMoved);
+    };
   }
   const setRep = (n: number) => setIndex({ exe: 0, rep: n });
   const setExe = (n: number) => setIndex({ ...index, exe: n });
+  const scroll = async (scrollRep: boolean, scrollExe: boolean) => {
+    const moveRep = () => {
+      if (repListEl.value) {
+        repListEl.value.children[index.rep].scrollIntoView({ behavior: 'smooth', inline: 'center' });
+      }
+    }
+    const moveExe = () => {
+      if (exeListEl.value) {
+        exeListEl.value.children[index.exe].scrollIntoView({ behavior: 'smooth', block: 'center'});
+      }
+    }
+    if (scrollRep && scrollExe) {
+      moveRep();
+      await wait(250); // chromium bug where scrollIntoView can't be done during the same time frame!
+      moveExe();
+    } else if (scrollRep) {
+      moveRep()
+    } else if (scrollExe) {
+      moveExe();
+    }
+  }
 
   const exercise = computed(() => workout.value ? workout.value.exercises[index.exe] : null);
 
   const running = ref<boolean>(false);
   const currentTime = ref<number>(0);
   const totalTime = computed(() => exercise.value ? exercise.value.duration * 1000 : 0);
+  const reminingTime = computed(() => totalTime.value - currentTime.value);
   const progress = computed(() => mapTo(currentTime.value, { from: { min: 0, max: totalTime.value }, to: { min: 0, max: 1 } }));  
   let loopId: number | undefined = undefined;
 
@@ -43,6 +77,7 @@
   }
 
   const finish = () => {
+    currentTime.value = totalTime.value;
     stop();
   }
 
@@ -99,6 +134,7 @@
   const start = () => {
     if (loopId !== undefined) return;
     const { add } = useLoop();
+    if (progress.value <= 0 && exercise.value) sayExe(exercise.value);
     loopId = add(loop);
   }
   const stop = () => {
@@ -108,7 +144,6 @@
     loopId = undefined;
   }
 
-  const resume = () => running.value = true;
   const pause = () => running.value = false;
   const toggle = () => running.value = !running.value;
   const completed = computed(() => {
@@ -159,10 +194,10 @@
   <div class="workout-page max-h-[100vh] sm:max-h-[calc(100vh-40px)]">
     <div v-if="workout" class="w-full flex flex-col justify-start items-center">
       <!-- progress wheel area -->
-      <div class="p-4 pb-0 w-full flex justify-center">
+      <div class="xm:p-4 xm:pb-0 p-2 pb-0 w-full flex justify-center">
         <ProgressWheel :percentage="progress" class="grid place-content-center relative" >
-          <div v-text="`${currentTime.toPrecision(2)}/${totalTime}`"/>
-          <div class="absolute w-full bottom-6 left-0 flex flex-row justify-center items-end space-x-2">
+          <ProgressDuration :time="reminingTime"/>
+          <div class="absolute w-full bottom-6 left-0 flex flex-row justify-center items-end space-x-2 xm:scale-100 scale-[0.8]">
             <Button 
               :onClick="backState === 'back' ? back : redo"
               :clickable="backState === 'back' ? canGoBack : true"
@@ -196,7 +231,7 @@
       <div class="flex justify-start items-center text-3xl w-full max-w-full px-2 pb-2 rounded-md relative h-12">
         <span v-text="`repetition`" class="text-xl leading-none bottom-[125%] underline decoration-accent italic mr-4 absolute"/>
         <!-- set selectors! -->
-        <div class="flex items-center justify-start space-x-3 overflow-auto touch-pan-x scrollbar-hide">
+        <div ref="repListEl" class="flex items-center justify-start space-x-3 overflow-auto touch-pan-x scrollbar-hide">
           <Button v-for="(_, i) in workout.reps" v-text="i + 1" 
             class="py-1 px-3 text-center border-accent dark:bg-highlight-dark bg-highlight-light rounded-md shadow-xl duration-75 transition-[border-width]"
             :class="{'border-b-4': i == index.rep}" :onClick="() => setRep(i)" :sound="{ on: ['key'] }"
@@ -204,13 +239,13 @@
         </div>
       </div>
       <!-- exercise area -->
-      <div class="w-full mt-3 px-3 pb-3 overflow-auto scrollbar-hide mb-16">
+      <div ref="exeListEl" class="w-full mt-3 px-3 pb-3 overflow-auto scrollbar-hide mb-16 divide-y divide-dashed divide-opacity-75 divide-neutral">
         <div v-for="{ name, duration }, i in workout.exercises" @click="setExe(i)"
           class="
-            first:rounded-t-md last:rounded-b-md w-full flex justify-between text-3xl 
+            first:rounded-t-md last:rounded-b-md w-full flex justify-between text-3xl  items-center
             dark:bg-highlight-dark bg-highlight-light p-4 leading-none
           "
-          :class="`${index.exe === i ? 'opacity-100' : 'opacity-50'}`"
+          :class="`${index.exe === i ? 'opacity-100' : 'opacity-60'}`"
         >
           <p v-text="name"/>
           <ExerciseDuration :duration="duration"/>
