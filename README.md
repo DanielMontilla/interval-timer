@@ -7,7 +7,7 @@ Go to [app](google.com).
 ### Features
 - [x] Interval timer from custom workout ⌛
 	- [x] text-to-speech prompts 💬
-	- [x] flexible playback controls ⏯
+	- [ ] flexible playback controls ⏯
 	- [x] visual progress indicator 🔋
 - [x] Lightweight 💾
 - [x] Minimal UI 🔎
