@@ -30,3 +30,10 @@ export interface Workout {
 export type Workouts = Record<string, Workout>;
 
 export type LoopCallback = (dt: number) => void;
+
+export interface Duration {
+  hours: number;
+  minutes: number;
+  seconds: number;
+  miliseconds: number;
+}

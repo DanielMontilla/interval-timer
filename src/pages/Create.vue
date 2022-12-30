@@ -2,7 +2,7 @@
   import { Button, Input } from '@/components/_index'
   import { InputData, ExerciseData, Action, Workout, Exercise } from '@/types';
   import { exerciseNameSchema, workoutNameSchema, repsSchema, durationSchema } from '@/validation';
-  import { DEF_INPUT_DATA, DEF_EXERCISE_DATA, ACTIONS_ARRAY, validateInputData, wait, waitS, defineOptions } from '@/util'
+  import { DEF_INPUT_DATA, DEF_EXERCISE_DATA, ACTIONS_ARRAY, validateInputData, wait, BUTTON_SFX_ARRAY, defineOptions } from '@/util'
   import { computed, onActivated, onDeactivated, ref, watch, nextTick } from 'vue';
   import { v4 as genId } from 'uuid';
   import { useRouter, useState } from '@/services/_index';
@@ -203,7 +203,7 @@
             >
             <TransitionGroup name="action-btn">
               <Button v-for="action in ACTIONS_ARRAY" :key="action"
-                :sound="{ success: ['key'], failed: ['error'] }"
+                :sound="{ on: BUTTON_SFX_ARRAY, failed: ['error'] }"
                 :clickable="canPerformAction[action](i)"
                 :cooldown="300"
                 :onClick="() => handleAction[action](i)"
@@ -223,7 +223,7 @@
             v-model:data="workoutExercises[i].data.name"
             />
             <Input
-            label="Duration"
+            label="Duration (s)"
             labelClass="sm:text-xl text-base"
             :schema="durationSchema" isNumber
             v-model:data="workoutExercises[i].data.duration"

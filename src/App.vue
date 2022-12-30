@@ -55,8 +55,7 @@
   }
 
   .page {
-    @apply
-      min-h-screen
+    @apply min-h-screen sm:min-h-[calc(100vh-40px)]
   }
 
   .fade-enter-active,

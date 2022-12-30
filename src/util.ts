@@ -9,6 +9,7 @@ export const DEF_INPUT_DATA: InputData = { state: 'empty', content: '' };
 export const DEF_EXERCISE_DATA: ExerciseData = { name: DEF_INPUT_DATA, duration: DEF_INPUT_DATA };
 
 export const KEY_SFX_ARR = Array(3).map(i => `succ_click_${i}`);
+export const BUTTON_SFX_ARRAY =[...Array(5).keys()].map(i => `button_${i + 1}`);
 
 /* actual util */
 export const clamp = (n: number, {min, max} = { min: 0, max: 1 }) => {
@@ -98,9 +99,10 @@ export const randFloat = (opts: Partial<Interval>) => {
 export const randInt = (opts: Partial<Interval>) => Math.round(randFloat(opts));
 export const randPick = <T>(arr: T[]): T => arr[ randInt({ min: 0, max: arr.length - 1 }) ];
 
-export const divide = (divisor: number, dividend: number) => {
-  const quotient = divisor % dividend;
-  const remainder = dividend - divisor * quotient;
+// `dividend` mod `divisor` = `remainder`
+export const modDiv = (dividend: number, divisor: number) => {
+  const remainder =  dividend % divisor;
+  const quotient = Math.floor(dividend / divisor);
   return { quotient, remainder };
 }
 export const toSignificant = (n: number, digits: number) => {
@@ -112,17 +114,40 @@ export const toSignificant = (n: number, digits: number) => {
 const aSecond = 1000;
 const aMinute = aSecond * 60;
 const anHour = aMinute * 60;
-export const parseDuration = (ms: number) => {
-  const { quotient: hours, remainder: rHours } = divide(ms, anHour);
-  const { quotient: minutes, remainder: rMinutes } = divide(ms, rHours);
-  const { quotient: seconds, remainder: miliseconds } = divide(ms, rMinutes);
+export const parseMiliseconds = (ms: number) => {
+  let remainder = Math.floor(ms);
+
+  const hours = Math.floor(remainder / anHour);
+  remainder %= anHour;
+  
+  const minutes = Math.floor(remainder / aMinute);
+  remainder %= aMinute;
+  
+  const seconds = Math.floor(remainder / aSecond);
+  remainder %= aSecond;
+
+  const miliseconds = remainder;
+  return { hours, minutes, seconds, miliseconds }
+}
+
+const twoDigits = (n: number) => {
+  let res = `${n}`;
+  if (res.length < 2) res = `0` + res;
+  return res;
+}
+export const formatDuration = (duration: number) => {
+  const { hours, minutes, seconds, miliseconds } = parseMiliseconds(duration * 1000);
   const hasHours = hours > 0;
-  const hasMinutes = minutes > 0 && hasHours;
-  const hasSeconds = seconds > 0 && hasMinutes;
+  const hasMinutes = minutes > 0;
+  const hasSeconds = seconds > 0;
+  const hasMiliseconds = miliseconds > 0;
+
+  const empty = null;
+
   return {
-    hours: hasHours ? toSignificant(hours, 2) : null,
-    minutes: hasMinutes ? toSignificant(minutes, 2) : null,
-    seconds: hasSeconds ? toSignificant(seconds, 2) : null,
-    miliseconds: toSignificant(miliseconds, 2)
+    hours: hasHours ? hours : empty,
+    minutes: hasMinutes ? minutes : empty,
+    seconds: hasSeconds ? seconds : empty,
+    miliseconds: hasMiliseconds ? miliseconds : empty
   }
 }

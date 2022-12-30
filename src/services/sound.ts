@@ -11,6 +11,5 @@ const play = (path: string, volume = .5) => {
 }
 
 const _globalVolume = ref(.5);
-watch(_globalVolume, n => _globalVolume.value = clamp(n));
 
 export default useSound;
