@@ -6,6 +6,7 @@
   import { computed, onActivated, onDeactivated, ref, watch, nextTick } from 'vue';
   import { v4 as genId } from 'uuid';
   import { useRouter, useState } from '@/services/_index';
+import { e } from 'vitest/dist/index-40ebba2b';
 
   const { editing, stopEditing } = useState();
 
@@ -81,6 +82,15 @@
     reset();
   }
 
+  const focusAt = (at: number) => {
+    if (!screenEl.value) return;
+    try {
+      const el = Array.from(screenEl.value.children).filter(el => el.classList.contains('exerciseItemEl'))[at] as HTMLDivElement;
+      const inputEl = Array.from(Array.from(Array.from(el.children)[0].children).filter(i => i.classList.contains('name-el'))[0].children).filter(j => j.classList.contains('input-el'))[0] as HTMLInputElement;
+      inputEl.focus({ preventScroll: true });
+    } catch {}
+  }
+
   const scrollTo = (at: number) => {
     if (!screenEl.value) return;
     const el = Array.from(screenEl.value.children).filter(el => el.classList.contains('exerciseItemEl'))[at] as HTMLDivElement;
@@ -95,7 +105,7 @@
     move: boolean
   }>) => {
     const { at, data, id, move } = defineOptions(opts, {
-      at: workoutExercises.value.length,
+      at: workoutExercises.value.length - 1,
       data: DEF_EXERCISE_DATA,
       id: genId(),
       move: true
@@ -106,6 +116,7 @@
     if (!move) return;
     await nextTick();
     scrollTo(at);
+    focusAt(at + 1);
   };
 
   const copyExercise = (
@@ -217,6 +228,7 @@
   
           <!-- inputs! -->
           <Input
+            class="name-el"
             :label="`Name`"
             labelClass="sm:text-xl text-base"
             :schema="exerciseNameSchema"

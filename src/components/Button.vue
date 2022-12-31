@@ -9,7 +9,8 @@ import { randPick } from '@/util';
     disabled?: boolean,
     disabledClass?: string,
     activeClass?: string,
-    cooldown?: number | null
+    cooldown?: number | null,
+    stop?: boolean
   }
 
   const props = withDefaults(
@@ -20,14 +21,16 @@ import { randPick } from '@/util';
       clickable: () => true,
       disabledClass: () => `grayscale`,
       activeClass: () => ``,
-      cooldown: () => null
+      cooldown: () => null,
+      stop: () => false
     }
   );
 
   let _onCooldown = false;
 
-  const click = () => {
-    const { clickable, sound, onClick, cooldown } = props;
+  const click = (e: Event) => {
+    const { clickable, sound, onClick, cooldown, stop } = props;
+    if (stop) e.stopPropagation();
     const { play } = useSound();
 
     if (_onCooldown) return;

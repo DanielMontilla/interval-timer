@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-export const workoutNameMax = 20;
-export const exerciseNameMax = 20;
+export const workoutNameMax = 32;
+export const exerciseNameMax = 32;
 
 export const workoutNameSchema = z.string({ invalid_type_error: `must be a string`})
   .max(workoutNameMax, { message: `must be less than ${workoutNameMax}` })

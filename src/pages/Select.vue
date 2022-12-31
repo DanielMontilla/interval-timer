@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { Button, WorkoutDuration } from '@/components/_index';
   import { useState, useRouter } from '@/services/_index';
 
   const { workouts, selectWorkout, removeWorkout, workoutsExists, selectEditWorkout } = useState();
@@ -11,36 +12,78 @@
 </script>
 
 <template>
-  <div>
-    <div v-if="workoutsExists" class="flex flex-col divide-y-2 dark:divide-background-dark divide-background-light">
-      <div v-for="(workout, id) in workouts" @click="select(id)" :key="id"
-        class="w-full h-[81px] bg-highlight-light dark:bg-highlight-dark py-1 px-2"
-      >
-      <span class="flex gap-2 items-center">
-        <p v-text="workout.name" class="font-bold text-2xl leading-none"/>
-        <div @click.stop="removeWorkout(id)" class="h-4 w-4 rounded-full bg-red-900"/>
-        <div @click.stop="selectEditWorkout(id)" class="h-4 w-4 rounded-full bg-orange-500"/>
-      </span>
-        <div class="text-lg mt-3">
-          <div class="stat-box">
-            <inline-svg :src="`icons/reps.svg`" class="inline self-center h-6 aspect-square"/>
-            <p v-text="`${workout.reps}`" class="inline-block align-middle"/>
-          </div>
+  <div v-if="workoutsExists" class="p-2 flex flex-col space-y-2">
+    <div v-for="{ name, reps, exercises }, i  in workouts" 
+      @click="select(i)"
+      class="
+        dark:bg-highlight-dark bg-highlight-light relative
+        border-[1px] border-neutral border-opacity-50
+        p-3 pt-2 flex flex-col space-y-5 rounded-md drop-shadow-lg
+      "
+    >
+      <div v-text="name" class="xm:text-5xl text-4xl font-bold max-w-[90%] leading-tight"/>
+      <div class="flex flex-row items-center justify-start space-x-2">
+        <div class="stat-tag">
+          <div v-text="reps" class="xm:-translate-y-[1px] self-center"/>
+          <div v-text="`rep${reps !== 1 ? 's' : ''}`" class="font-bold self-center"/>
+        </div>
+        <div class="stat-tag">
+          <inline-svg :src="`icons/duration.svg`" class="stat-icon"/>
+          <WorkoutDuration total :reps="reps" :exercises="exercises"/>
+          <div v-text="`/total`" class="italic text-base leading-none -translate-y-1"/>
+        </div>
+      </div>
+      <div class="absolute -top-5 right-0 p-2 pr-3 m-0 h-full flex flex-col xm:justify-around justify-between">
+        <div class="action-cont">
+          <Button :sound="{ on: ['key'] }" :onClick="() => selectEditWorkout(i)" stop
+            class="action bg-neutral"
+          >
+            <inline-svg :src="`icons/edit.svg`" class="action-icon"/>
+          </Button>
+        </div>
+        <div class="action-cont">
+          <Button :sound="{ on: ['key'] }" :onClick="() => removeWorkout(i)" stop
+            class="action bg-red-600"
+          >
+            <inline-svg :src="`icons/delete.svg`" class="action-icon"/>
+          </Button>
         </div>
       </div>
     </div>
-    <div v-else class="invalid-screen h-full">
-      <p class="title-msg" v-text="`No workout\ncreated yet!`"/>
-      <p class="sub-msg" v-text="`please create one!`"/>
-      <div class="re-btn" @click="goToNamed('create')" v-text="`create workout`"/>
-    </div>
+    <Button v-text="`new workout`" :onClick="() => goToNamed('create')" :sound="{ on: ['key'] }"
+      class="w-full h-16 rounded-md font-bold dark:bg-highlight-dark bg-highlight-light grid place-items-center text-xl drop-shadow-lg border-2 border-dashed border-neutral/50 active:bg-opacity-10"
+    />
+    <div class="min-h-[60px]" />
+  </div>
+  <div v-else class="invalid-screen h-full">
+    <p class="title-msg" v-text="`No workout\ncreated yet!`"/>
+    <p class="sub-msg" v-text="`please create one!`"/>
+    <div class="re-btn" @click="goToNamed('create')" v-text="`create workout`"/>
   </div>
 </template>
 
 <style scoped>
-  .stat-box {
-    @apply
-      border-2 rounded-md border-white/5 bg-white/5 p-1 leading-none h-8 inline-flex items-center divide-x-8 divide-transparent
+  .action-cont {
+    @apply w-full h-full grid content-center justify-items-end;
+  }
+  .action {
+    @apply text-lg ring-1 ring-neutral border-b-4 border-neutral rounded-md xm:p-1 p-0 bg-opacity-25
+      active:border-none transition-[border-width] duration-75 ease-linear
+    ;
+  }
+  .action-icon {
+    @apply h-7 w-7;
+  }
+  .stat-tag {
+    @apply py-1 px-2 flex flex-row items-end space-x-1 min-w-min
+      leading-none xm:text-xl text-lg text-black
+      bg-neutral bg-opacity-75 rounded-md ring-2 dark:ring-text-light/75 ring-text-dark/75
+      min-h-[40px]
+    ;
+  }
+  .stat-icon {
+    @apply h-7 w-7 translate-y-[1px] self-center
+    ;
   }
 
   .invalid-screen {

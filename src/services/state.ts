@@ -7,7 +7,7 @@ import { computed, ref, watch } from "vue";
 const useState = () => ({ init, workouts, workout, addWorkout, selectWorkout, workoutsExists, removeWorkout, editWorkout, editing, stopEditing, selectEditWorkout });
 
 const _workouts = ref<Workouts>({});
-const _id = ref<string>('dc68a164-13d3-4ab3-adda-239dc3bd6473');
+const _id = ref<string>('');
 const _editingId = ref<string>('');
 let _hasInit = false;
 

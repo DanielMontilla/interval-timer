@@ -1,4 +1,4 @@
-import { Exercise, ExerciseData, InputData, InputState } from "@/types";
+import { Workout, ExerciseData, InputData, InputState } from "@/types";
 import { VNodeRef } from "vue";
 import { ZodSchema } from "zod";
 
@@ -153,5 +153,28 @@ export const formatDuration = (duration: number) => {
     minutes: hasMinutes ? minutes : empty,
     seconds: hasSeconds ? seconds : empty,
     miliseconds: hasMiliseconds ? miliseconds : empty
+  }
+}
+
+export const formatWorkoutDuration = ({ reps, exercises, total }: Omit<Workout, 'name'> & { total: boolean }) => {
+
+  let totalDuration = 0;
+  
+  for (const { duration } of exercises) totalDuration += duration;
+
+  if (total) totalDuration *= reps;
+  
+  const { hours, minutes, seconds } = parseMiliseconds(totalDuration * 1000);
+
+  const hasHours = hours > 0;
+  const hasMinutes = minutes > 0;
+  const hasSeconds = seconds > 0;
+
+  const empty = null;
+
+  return {
+    hours: hasHours ? hours : empty,
+    minutes: hasMinutes ? minutes : empty,
+    seconds: hasSeconds ? seconds : empty,
   }
 }
