@@ -1,4 +1,4 @@
-# Workout Interval Timer
+# Interval Timer
 A mobile web app to create, track and use custom interval workout routines!
 
 ### Try it out!
