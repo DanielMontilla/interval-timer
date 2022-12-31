@@ -6,12 +6,12 @@
 
 <template>
   <div class="navegation-bar">
-    <div v-for="{ name } in routes" @click="goToNamed(name)"
+    <div v-for="_, i in Array(4)" @click="goToNamed(routes[i].name as string)"
       class="flex flex-col h-full justify-evenly"
-      :class="{'text-accent underline decoration-2': currentRoute === name}"
+      :class="{'text-accent underline decoration-2': currentRoute === routes[i].name}"
     >
-      <inline-svg :src="`icons/${name}.svg`" class="mb-1" />
-      <div v-text="name" class="leading-none text-center font-bold text-text-light dark:text-text-dark"/>
+      <inline-svg :src="`icons/${routes[i].name}.svg`" class="mb-1" />
+      <div v-text="routes[i].name" class="leading-none text-center font-bold text-text-light dark:text-text-dark"/>
     </div>
   </div>
 </template>
@@ -28,7 +28,7 @@
       max-w-[640px]
     ;
 
-    filter: drop-shadow(0px 0px 7px #000);
+    filter: drop-shadow(0px 0px 7px rgba(0, 0, 0, 0.5));
   }
 
   svg {

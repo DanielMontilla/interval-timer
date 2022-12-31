@@ -18,6 +18,8 @@ export default defineConfig({
         short_name: 'iTimer',
         description: 'Simple interval timer app!',
         theme_color: '#1f1f1f',
+        orientation: 'portrait',
+        display: 'standalone',
         icons: [
           {
             src: '/app/android-chrome-192x192.png',

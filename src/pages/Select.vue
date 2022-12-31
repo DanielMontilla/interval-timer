@@ -55,10 +55,12 @@
     />
     <div class="min-h-[60px]" />
   </div>
-  <div v-else class="invalid-screen h-full">
-    <p class="title-msg" v-text="`No workout\ncreated yet!`"/>
-    <p class="sub-msg" v-text="`please create one!`"/>
-    <div class="re-btn" @click="goToNamed('create')" v-text="`create workout`"/>
+  <div v-else>
+    <div class="invalid-screen">
+      <p class="title-msg" v-text="`No workout\ncreated yet!`"/>
+      <p class="sub-msg" v-text="`please create one!`"/>
+      <div class="re-btn" @click="goToNamed('create')" v-text="`create workout`"/>
+    </div>
   </div>
 </template>
 

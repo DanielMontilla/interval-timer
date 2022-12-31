@@ -1,4 +1,4 @@
-import { useRouter as useR, createRouter, createWebHashHistory } from 'vue-router'
+import { useRouter as useR, createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import * as Pages from '@/pages/_index';
 import { computed } from 'vue';
 
@@ -9,6 +9,8 @@ const routes = [
   { path: '/select',  component: Pages.Select,  name: 'select' },
   { path: '/workout', component: Pages.Workout, name: 'workout' },
   { path: '/create',  component: Pages.Create,  name: 'create' },
+
+  { path: '/:pathMatch(.*)*', redirect: '/' }
 ]
 
 const Router = createRouter({
