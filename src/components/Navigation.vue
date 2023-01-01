@@ -28,7 +28,7 @@
       max-w-[640px]
     ;
 
-    filter: drop-shadow(0px 0px 7px rgba(0, 0, 0, 0.5));
+    box-shadow: 0px 0px 16px 0px rgba(0,0,0,0.20);
   }
 
   svg {

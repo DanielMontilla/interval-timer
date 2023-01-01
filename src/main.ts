@@ -10,7 +10,6 @@ createApp(App)
   .use(Router)
   .mount('#app');
 
-
 const enterPWA = () => {
   console.log('enabled PWA startup')
   // LOCK SCREEN SIZE

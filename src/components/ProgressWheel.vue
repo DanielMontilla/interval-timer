@@ -1,6 +1,6 @@
 <script setup lang="ts">
   // made using: @copyright https://www.freecodecamp.org/news/css-only-pie-chart/
-  import { clamp } from '@/util';
+  import { clamp, wait } from '@/util';
   import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue';
 
   interface ProgressWheelProps {
@@ -11,6 +11,27 @@
   const _percentage = computed(() => clamp(props.percentage, { min: 0, max: 1 }));
 
   const contEl = ref<HTMLDivElement>();
+  const resize = async () => {
+    if (!contEl.value) return;
+    console.log('resizing')
+    const value = contEl.value.offsetWidth;
+    if (value <= 0) {
+      await wait(10);
+      resize();
+      return;
+    }
+    contEl.value.style.height = `${contEl.value.offsetWidth}px`;
+  }
+
+  onMounted(() => {
+    if (CSS.supports('aspect-ratio', '1 / 1')) return;
+    window.addEventListener('resize', resize);
+    resize();
+  })
+
+  onUnmounted(() => {
+    window.removeEventListener('resize', resize);
+  })
 
 </script>
 
@@ -24,7 +45,7 @@
 <style scoped>
   .progress-wheel {
     @apply
-      w-full max-w-lg aspect-square relative z-10
+      w-full max-w-lg h-full aspect-square relative z-10
       /* inline-grid place-content-center */
   }
   

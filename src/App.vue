@@ -37,7 +37,7 @@
 <style scoped>
   main {
     @apply 
-      w-screen h-screen select-none overflow-hidden relative
+      w-screen h-screen select-none overflow-hidden overflow-y-hidden fixed
       grid place-content-center
       transition-colors
       bg-void-light text-text-light

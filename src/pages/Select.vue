@@ -12,54 +12,56 @@
 </script>
 
 <template>
-  <div v-if="workoutsExists" class="p-2 flex flex-col space-y-2">
-    <div v-for="{ name, reps, exercises }, i  in workouts" 
-      @click="select(i)"
-      class="
-        dark:bg-highlight-dark bg-highlight-light relative
-        border-[1px] border-neutral border-opacity-50
-        p-3 pt-2 flex flex-col space-y-5 rounded-md drop-shadow-lg
-      "
-    >
-      <div v-text="name" class="xm:text-5xl text-4xl font-bold max-w-[90%] leading-tight"/>
-      <div class="flex flex-row items-center justify-start space-x-2">
-        <div class="stat-tag">
-          <div v-text="reps" class="xm:-translate-y-[1px] self-center"/>
-          <div v-text="`rep${reps !== 1 ? 's' : ''}`" class="font-bold self-center"/>
+  <div class="p-2">
+    <div v-if="workoutsExists" class="flex flex-col space-y-2">
+      <div v-for="{ name, reps, exercises }, i  in workouts" 
+        @click="select(i)"
+        class="
+          dark:bg-highlight-dark bg-highlight-light relative
+          border-[1px] border-neutral border-opacity-50
+          p-3 pt-2 flex flex-col space-y-5 rounded-md drop-shadow-lg
+        "
+      >
+        <div v-text="name" class="xm:text-5xl text-4xl font-bold max-w-[90%] leading-tight"/>
+        <div class="flex flex-row items-center justify-start space-x-2">
+          <div class="stat-tag">
+            <div v-text="reps" class="xm:-translate-y-[1px] self-center"/>
+            <div v-text="`rep${reps !== 1 ? 's' : ''}`" class="font-bold self-center"/>
+          </div>
+          <div class="stat-tag">
+            <inline-svg :src="`icons/duration.svg`" class="stat-icon"/>
+            <WorkoutDuration total :reps="reps" :exercises="exercises"/>
+            <div v-text="`/total`" class="italic text-base leading-none -translate-y-1"/>
+          </div>
         </div>
-        <div class="stat-tag">
-          <inline-svg :src="`icons/duration.svg`" class="stat-icon"/>
-          <WorkoutDuration total :reps="reps" :exercises="exercises"/>
-          <div v-text="`/total`" class="italic text-base leading-none -translate-y-1"/>
+        <div class="absolute -top-5 right-0 p-2 pr-3 m-0 h-full flex flex-col xm:justify-around justify-between">
+          <div class="action-cont">
+            <Button :sound="{ on: ['key'] }" :onClick="() => selectEditWorkout(i)" stop
+              class="action bg-neutral"
+            >
+              <inline-svg :src="`icons/edit.svg`" class="action-icon"/>
+            </Button>
+          </div>
+          <div class="action-cont">
+            <Button :sound="{ on: ['key'] }" :onClick="() => removeWorkout(i)" stop
+              class="action bg-red-600"
+            >
+              <inline-svg :src="`icons/delete.svg`" class="action-icon"/>
+            </Button>
+          </div>
         </div>
       </div>
-      <div class="absolute -top-5 right-0 p-2 pr-3 m-0 h-full flex flex-col xm:justify-around justify-between">
-        <div class="action-cont">
-          <Button :sound="{ on: ['key'] }" :onClick="() => selectEditWorkout(i)" stop
-            class="action bg-neutral"
-          >
-            <inline-svg :src="`icons/edit.svg`" class="action-icon"/>
-          </Button>
-        </div>
-        <div class="action-cont">
-          <Button :sound="{ on: ['key'] }" :onClick="() => removeWorkout(i)" stop
-            class="action bg-red-600"
-          >
-            <inline-svg :src="`icons/delete.svg`" class="action-icon"/>
-          </Button>
-        </div>
-      </div>
+      <Button v-text="`new workout`" :onClick="() => goToNamed('create')" :sound="{ on: ['key'] }"
+        class="w-full h-16 rounded-md font-bold dark:bg-highlight-dark bg-highlight-light grid place-items-center text-xl drop-shadow-lg border-2 border-dashed border-neutral/50 active:bg-opacity-10"
+      />
+      <div class="min-h-[60px]" />
     </div>
-    <Button v-text="`new workout`" :onClick="() => goToNamed('create')" :sound="{ on: ['key'] }"
-      class="w-full h-16 rounded-md font-bold dark:bg-highlight-dark bg-highlight-light grid place-items-center text-xl drop-shadow-lg border-2 border-dashed border-neutral/50 active:bg-opacity-10"
-    />
-    <div class="min-h-[60px]" />
-  </div>
-  <div v-else>
-    <div class="invalid-screen">
-      <p class="title-msg" v-text="`No workout\ncreated yet!`"/>
-      <p class="sub-msg" v-text="`please create one!`"/>
-      <div class="re-btn" @click="goToNamed('create')" v-text="`create workout`"/>
+    <div v-else>
+      <div class="invalid-screen">
+        <p class="title-msg" v-text="`No workout\ncreated yet!`"/>
+        <p class="sub-msg" v-text="`please create one!`"/>
+        <div class="re-btn" @click="goToNamed('create')" v-text="`create workout`"/>
+      </div>
     </div>
   </div>
 </template>
