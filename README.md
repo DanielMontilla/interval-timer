@@ -1,9 +1,8 @@
 # Interval Timer
-A mobile web app to create, track and use custom interval workout routines (or any other activity that uses interval timers)!
-
+A mobile web app to create, track and use custom interval workout routines!
 ## [Try it out!](https://danielmontilla.github.io/interval-timer/)
 
-### Preview
+### Showcase
 ![alt text](https://github.com/DanielMontilla/interval-timer/blob/master/showcase.png?raw=true)
 
 ### Features
@@ -24,8 +23,7 @@ A mobile web app to create, track and use custom interval workout routines (or a
 - [Tailwind](https://tailwindcss.com/) A powerfull utility-first CSS framework
 - [Zod](https://github.com/colinhacks/zod) Versitile Data validation tool
 - [Howler](https://howlerjs.com/) Sound API
-
-And ofcourse everything was written with Typecript, HTML and CSS!
+Everything was written in Typecript, HTML and CSS!
 
 ### Possible Improvement/features
 - [ ] Workout sharing via QR code 📶
