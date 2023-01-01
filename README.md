@@ -1,7 +1,9 @@
 # Interval Timer
 A mobile web app to create, track and use custom interval workout routines (or any other activity that uses interval timers)!
 
-### [Try it out!]([https://danielmontilla.github.io/interval-timer/](https://danielmontilla.github.io/interval-timer/))
+## [Try it out!](https://danielmontilla.github.io/interval-timer/)
+
+### Preview
 
 ### Features
 - [x] Interval timer from custom workout ⌛
