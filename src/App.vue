@@ -5,10 +5,11 @@
 
   const { toggleTheme, theme, changeTheme } = useTheme();
   const { init } = useState();
-  const router = useRouter();
+  const { goToNamed, currentRoute } = useRouter();
 
   onMounted(() => {
     changeTheme('dark');
+    if (currentRoute.value !== 'home') goToNamed('home');
     init();
   })
 
@@ -17,7 +18,7 @@
 <template>
   <main>
     <div
-      class="absolute top-0 right-0 text-2xl z-20 h-8 aspect-square"
+      class="absolute top-0 right-0 text-2xl z-20 h-8 aspect-square invisible sm:visible"
       v-text="theme == 'light' ? `🌑` : `🌕`"
       @click="toggleTheme"
     />

@@ -4,12 +4,15 @@ import { defineOptions } from "@/util";
 import { v4 as genId } from 'uuid';
 import { computed, ref, watch } from "vue";
 
-const useState = () => ({ init, workouts, workout, addWorkout, selectWorkout, workoutsExists, removeWorkout, editWorkout, editing, stopEditing, selectEditWorkout });
+const useState = () => ({ init, firstLoad, workouts, workout, addWorkout, selectWorkout, workoutsExists, removeWorkout, editWorkout, editing, stopEditing, selectEditWorkout, showNav });
 
 const _workouts = ref<Workouts>({});
 const _id = ref<string>('');
 const _editingId = ref<string>('');
 let _hasInit = false;
+
+const showNav = ref(false);
+const firstLoad = ref(true);
 
 const workouts = computed(() => _workouts.value);
 const editing = ref<{

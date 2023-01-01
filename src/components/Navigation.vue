@@ -1,14 +1,15 @@
 <script setup lang="ts">
-  import { useRouter } from '@/services/_index'
+  import { useRouter, useState } from '@/services/_index'
   const { goToNamed, routes, currentRoute } = useRouter();
+  const { showNav, firstLoad } = useState();
 
 </script>
 
 <template>
-  <div class="navegation-bar">
+  <div class="navegation-bar" :class="[{ 'nav-anim': showNav && firstLoad }, { 'invisible': !showNav }]">
     <div v-for="_, i in Array(4)" @click="goToNamed(routes[i].name as string)"
       class="flex flex-col h-full justify-evenly"
-      :class="{'text-accent underline decoration-2': currentRoute === routes[i].name}"
+      :class="{ 'text-accent underline decoration-2': currentRoute === routes[i].name }"
     >
       <inline-svg :src="`icons/${routes[i].name}.svg`" class="mb-1" />
       <div v-text="routes[i].name" class="leading-none text-center font-bold text-text-light dark:text-text-dark"/>
@@ -35,5 +36,14 @@
     @apply
       aspect-square h-8
       transition-[fill] duration-75
+  }
+
+  .nav-anim {
+    animation: fade-in .75s linear;
+  }
+
+  @keyframes fade-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
   }
 </style>

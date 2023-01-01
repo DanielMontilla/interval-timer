@@ -20,6 +20,6 @@ const Router = createRouter({
 
 const currentRoute = computed(() => Router.currentRoute.value.name);
 const goToPath = (path: string) => Router.push({ path });
-const goToNamed = (name: string) => Router.push({ name })
+const goToNamed = async (name: string) => Router.push({ name });
 
 export { useRouter, Router } ;

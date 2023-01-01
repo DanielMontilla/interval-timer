@@ -3,10 +3,9 @@
   import { InputData, ExerciseData, Action, Workout, Exercise } from '@/types';
   import { exerciseNameSchema, workoutNameSchema, repsSchema, durationSchema } from '@/validation';
   import { DEF_INPUT_DATA, DEF_EXERCISE_DATA, ACTIONS_ARRAY, validateInputData, wait, BUTTON_SFX_ARRAY, defineOptions } from '@/util'
-  import { computed, onActivated, onDeactivated, ref, watch, nextTick } from 'vue';
+  import { ref, watch, nextTick } from 'vue';
   import { v4 as genId } from 'uuid';
   import { useRouter, useState } from '@/services/_index';
-import { e } from 'vitest/dist/index-40ebba2b';
 
   const { editing, stopEditing } = useState();
 
